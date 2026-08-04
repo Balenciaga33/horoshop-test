@@ -76,7 +76,7 @@ GitHub Actions (`.github/workflows/ci.yml`):
 
 1. **quality** — lint / format / typecheck (без secrets)
 2. **api** — після quality; на PR лише `@p0`, на push у `main`/`master` — усі API
-3. **ui** — після quality; headed Chromium через `xvfb-run` (див. KNOWN-ISSUES **U1**)
+3. **ui** — після **api** (fail-fast); headed Chromium через `xvfb-run` (див. KNOWN-ISSUES **U1**)
 
 Secrets: `HOROSHOP_LOGIN`, `HOROSHOP_PASSWORD`. Опційний variable: `HOROSHOP_BASE_URL`.
 
