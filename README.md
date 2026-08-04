@@ -101,8 +101,8 @@ Workflow: [`.github/workflows/ci.yml`](.github/workflows/ci.yml)
 | Job       | Що робить                                                                |
 | --------- | ------------------------------------------------------------------------ |
 | `quality` | `lint` → `format:check` → `typecheck`                                    |
-| `api`     | Playwright API (`@p0` на PR, повний набір на push у `main`/`master`)     |
-| `ui`      | Playwright UI у headed Chromium через `xvfb-run` (обхід U1 / `BAD_CSRF`) |
+| `api`     | Playwright API після `quality` (`@p0` на PR / full на push); без browser |
+| `ui`      | UI після `api` (fail-fast): install Chromium + headed/`xvfb-run` (U1)    |
 
 ### Secrets / Variables (репозиторій GitHub)
 
@@ -113,6 +113,8 @@ Workflow: [`.github/workflows/ci.yml`](.github/workflows/ci.yml)
 | `HOROSHOP_BASE_URL` | variable | ні          | дефолт `https://shop703343.horoshop.ua` |
 
 Звіти Playwright заливаються як artifacts (`playwright-report-api` / `playwright-report-ui`).
+
+Ручний запуск: **Actions → CI → Run workflow** (`workflow_dispatch`). Обери гілку (наприклад `staging`) і Run.
 
 ## Документація
 
