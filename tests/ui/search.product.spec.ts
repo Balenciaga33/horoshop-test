@@ -1,6 +1,6 @@
-import { expect, test } from '../fixtures/base.fixtures';
-import products from '../data/products.data.json';
-import searchData from '../data/search.data.json';
+import { expect, test } from '../../fixtures/base.fixtures';
+import products from '../../data/products.data.json';
+import searchData from '../../data/search.data.json';
 
 const product = products[searchData.exactName.productKey as keyof typeof products];
 

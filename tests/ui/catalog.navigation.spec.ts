@@ -1,6 +1,6 @@
-import { expect, test } from '../fixtures/base.fixtures';
-import catalog from '../data/catalog.data.json';
-import products from '../data/products.data.json';
+import { expect, test } from '../../fixtures/base.fixtures';
+import catalog from '../../data/catalog.data.json';
+import products from '../../data/products.data.json';
 
 const category = catalog.womensFashion;
 const expectedProductHrefs = category.expectedProductKeys.map(

@@ -1,6 +1,6 @@
-import { test } from '../fixtures/base.fixtures';
-import products from '../data/products.data.json';
-import { formatUah } from '../helper/price.helper';
+import { test } from '../../fixtures/base.fixtures';
+import products from '../../data/products.data.json';
+import { formatUah } from '../../helper/price.helper';
 
 const product = products.gentleSkinCleanser;
 const unitPrice = product.price;

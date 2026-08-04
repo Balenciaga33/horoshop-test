@@ -1,5 +1,5 @@
-import { expect, test } from '../fixtures/base.fixtures';
-import products from '../data/products.data.json';
+import { expect, test } from '../../fixtures/base.fixtures';
+import products from '../../data/products.data.json';
 
 const product = products.gentleSkinCleanser;
 

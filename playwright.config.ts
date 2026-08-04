@@ -1,4 +1,9 @@
 import { defineConfig, devices } from '@playwright/test';
+import dotenv from 'dotenv';
+import path from 'node:path';
+import { apiConfig } from './api/config';
+
+dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 export default defineConfig({
   testDir: './tests',
@@ -8,16 +13,28 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
   use: {
-    baseURL: 'https://shop703343.horoshop.ua',
-    // Horoshop cart AJAX returns BAD_CSRF under headless Chromium.
-    headless: false,
+    baseURL: apiConfig.baseURL,
     locale: 'uk-UA',
     trace: 'on-first-retry',
   },
   projects: [
     {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      name: 'api',
+      testMatch: /tests\/api\/.*\.spec\.ts/,
+      use: {
+        extraHTTPHeaders: {
+          Accept: 'application/json',
+        },
+      },
+    },
+    {
+      name: 'ui',
+      testMatch: /tests\/ui\/.*\.spec\.ts/,
+      use: {
+        ...devices['Desktop Chrome'],
+        // Horoshop cart AJAX returns BAD_CSRF under headless Chromium.
+        headless: false,
+      },
     },
   ],
 });

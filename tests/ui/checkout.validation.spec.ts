@@ -1,6 +1,6 @@
-import { expect, test } from '../fixtures/base.fixtures';
-import products from '../data/products.data.json';
-import validation from '../data/checkout.validation.data.json';
+import { expect, test } from '../../fixtures/base.fixtures';
+import products from '../../data/products.data.json';
+import validation from '../../data/checkout.validation.data.json';
 
 const product = products.gentleSkinCleanser;
 const recipient = validation.recipient;
