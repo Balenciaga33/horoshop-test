@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "noUncheckedSideEffectImports": true,
+    "libReplacement": false,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "types": ["node"]
+  },
+  "include": [
+    "playwright.config.ts",
+    "tests/**/*.ts",
+    "page/**/*.ts",
+    "helper/**/*.ts",
+    "fixtures/**/*.ts",
+    "api/**/*.ts",
+    "openapi/**/*.json",
+    "data/**/*.json"
+  ]
+}
