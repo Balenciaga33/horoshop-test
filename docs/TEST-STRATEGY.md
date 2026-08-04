@@ -75,8 +75,10 @@ test('Успішний POST /api/auth/ …', { tag: '@p0' }, async ({ authClient
 GitHub Actions (`.github/workflows/ci.yml`):
 
 1. **quality** — lint / format / typecheck (без secrets)
-2. **api** — після quality; на PR лише `@p0`, на push у `main`/`master` — усі API
+2. **api** — після quality; на PR лише `@p0`, на push/`workflow_dispatch` — усі API
 3. **ui** — після **api** (fail-fast); headed Chromium через `xvfb-run` (див. KNOWN-ISSUES **U1**)
+
+Ручний запуск: GitHub → **Actions → CI → Run workflow**.
 
 Secrets: `HOROSHOP_LOGIN`, `HOROSHOP_PASSWORD`. Опційний variable: `HOROSHOP_BASE_URL`.
 

@@ -114,6 +114,8 @@ Workflow: [`.github/workflows/ci.yml`](.github/workflows/ci.yml)
 
 Звіти Playwright заливаються як artifacts (`playwright-report-api` / `playwright-report-ui`).
 
+Ручний запуск: **Actions → CI → Run workflow** (`workflow_dispatch`). Обери гілку (наприклад `staging`) і Run.
+
 ## Документація
 
 - [Стратегія тестування](docs/TEST-STRATEGY.md) — пріоритети `@p0`/`@p1`, що куди класти

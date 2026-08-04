@@ -6,6 +6,7 @@ on:
       - main
       - master
   pull_request:
+  workflow_dispatch:
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
@@ -70,6 +71,7 @@ jobs:
           HOROSHOP_LOGIN: ${{ secrets.HOROSHOP_LOGIN }}
           HOROSHOP_PASSWORD: ${{ secrets.HOROSHOP_PASSWORD }}
         run: |
+          # PR = smoke @p0; push/manual = full project suite
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             npm run test:p0:api
           else
@@ -119,6 +121,7 @@ jobs:
         run: |
           # Horoshop cart AJAX returns BAD_CSRF under headless Chromium (KNOWN-ISSUES U1).
           # CI runs headed Chrome inside a virtual display.
+          # PR = smoke @p0; push/manual = full UI suite
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             xvfb-run --auto-servernum npm run test:p0:ui
           else
