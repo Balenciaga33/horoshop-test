@@ -22,6 +22,7 @@ horoshop-test/
 ├── page/                     # Page Object Model (UI)
 ├── tests/
 │   ├── api/                  # API-тести (project: api)
+│   │   └── openapi/          # Contract smoke по локальному OpenAPI
 │   └── ui/                   # UI-тести (project: ui)
 ├── playwright.config.ts
 ├── eslint.config.mjs
@@ -92,6 +93,26 @@ npx playwright test tests/api/auth.spec.ts --project=api
 | `npm run format`       | Prettier (запис)     |
 | `npm run format:check` | Prettier (перевірка) |
 | `npm run typecheck`    | `tsc --noEmit`       |
+
+## CI (GitHub Actions)
+
+Workflow: [`.github/workflows/ci.yml`](.github/workflows/ci.yml)
+
+| Job       | Що робить                                                                |
+| --------- | ------------------------------------------------------------------------ |
+| `quality` | `lint` → `format:check` → `typecheck`                                    |
+| `api`     | Playwright API (`@p0` на PR, повний набір на push у `main`/`master`)     |
+| `ui`      | Playwright UI у headed Chromium через `xvfb-run` (обхід U1 / `BAD_CSRF`) |
+
+### Secrets / Variables (репозиторій GitHub)
+
+| Назва               | Тип      | Обов’язково | Призначення                             |
+| ------------------- | -------- | ----------- | --------------------------------------- |
+| `HOROSHOP_LOGIN`    | secret   | так         | логін API                               |
+| `HOROSHOP_PASSWORD` | secret   | так         | пароль API                              |
+| `HOROSHOP_BASE_URL` | variable | ні          | дефолт `https://shop703343.horoshop.ua` |
+
+Звіти Playwright заливаються як artifacts (`playwright-report-api` / `playwright-report-ui`).
 
 ## Документація
 

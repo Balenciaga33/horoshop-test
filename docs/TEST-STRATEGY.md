@@ -32,7 +32,7 @@ test('Успішний POST /api/auth/ …', { tag: '@p0' }, async ({ authClient
 
 **@p0**
 
-- API: успішний auth, невалідний auth, catalog export з токеном, catalog без токена
+- API: успішний auth, невалідний auth, catalog export з токеном, catalog без токена, OpenAPI contract smoke
 - UI: додавання в кошик → checkout, каталог (меню/сорт/фільтр), пошук, порожній checkout (disabled submit)
 
 **@p1**
@@ -69,6 +69,16 @@ test('Успішний POST /api/auth/ …', { tag: '@p0' }, async ({ authClient
 4. `npm run test:p0`
 
 Повний `npm test` — перед релізом / великими змінами.
+
+## CI
+
+GitHub Actions (`.github/workflows/ci.yml`):
+
+1. **quality** — lint / format / typecheck (без secrets)
+2. **api** — після quality; на PR лише `@p0`, на push у `main`/`master` — усі API
+3. **ui** — після quality; headed Chromium через `xvfb-run` (див. KNOWN-ISSUES **U1**)
+
+Secrets: `HOROSHOP_LOGIN`, `HOROSHOP_PASSWORD`. Опційний variable: `HOROSHOP_BASE_URL`.
 
 ## Зовнішні обмеження магазину
 

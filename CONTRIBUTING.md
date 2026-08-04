@@ -24,7 +24,7 @@
    - `api/clients/*` для API
    - `fixtures/base.fixtures.ts` для wiring
 5. **Дані** тримайте в `data/*.json` (особливо товари — `products.data.json`)
-6. Для API-відповідей додайте/розширюйте Zod у `api/schemas/` і за потреби path у `openapi/horoshop.openapi.json`
+6. Для API-відповідей оновіть Zod у `api/schemas/`, path у `openapi/horoshop.openapi.json` і рядок у `tests/api/openapi/contract.spec.ts`
 7. Якщо фактична поведінка відрізняється від документації або «здорового глузду»:
    - фіксуйте **реальну** поведінку в асерті
    - додайте запис у [docs/KNOWN-ISSUES.md](docs/KNOWN-ISSUES.md)
@@ -57,6 +57,8 @@ npm run test:p0
 ```
 
 Повний прогін перед великим мерджем: `npm test`.
+
+CI на PR ганяє те саме quality-gate + `@p0` API/UI. Переконайтесь, що в GitHub Secrets задані `HOROSHOP_LOGIN` / `HOROSHOP_PASSWORD` (див. README → CI).
 
 ## Naming
 

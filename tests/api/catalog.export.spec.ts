@@ -6,7 +6,6 @@ import {
   parseSchema,
   unauthorizedErrorSchema,
 } from '../../api/schemas/api.schemas';
-import { assertOperationExists, loadOpenApiDoc } from '../../helper/openapi.helper';
 
 const knownProduct = products.gentleSkinCleanser;
 const knownSlug = knownProduct.slug.replace(/^\/|\/$/g, '');
@@ -16,10 +15,6 @@ test.describe('API: каталог', () => {
     'POST /api/catalog/export/ з токеном повертає products',
     { tag: '@p0' },
     async ({ catalogClient, apiToken }) => {
-      await test.step('OpenAPI contract містить catalog/export', async () => {
-        assertOperationExists(loadOpenApiDoc(), '/api/catalog/export/', 'post');
-      });
-
       const response = await catalogClient.export(apiToken);
       expect(response.status()).toBe(200);
       const body = await catalogClient.expectJson(response);

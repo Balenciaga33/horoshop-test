@@ -12,13 +12,13 @@ ID стабільні (`U*`, `A*`, `C*`) і не залежать від пор�
 
 ### U1 — Кошик у headless Chromium отримує `BAD_CSRF`
 
-|                    |                                                                |
-| ------------------ | -------------------------------------------------------------- |
-| Очікування         | UI-тести стабільно працюють у headless                         |
-| Факт               | `/_widget/ajax_cart/init/` часто падає з `BAD_CSRF` у headless |
-| Ризик              | False fail у CI без headed / спеціального обходу               |
-| Що робимо в тестах | UI project: `headless: false` у `playwright.config.ts`         |
-| Evidence           | `playwright.config.ts`, `helper/cart.helper.ts`                |
+|                    |                                                                             |
+| ------------------ | --------------------------------------------------------------------------- |
+| Очікування         | UI-тести стабільно працюють у headless                                      |
+| Факт               | `/_widget/ajax_cart/init/` часто падає з `BAD_CSRF` у headless              |
+| Ризик              | False fail у CI без headed / спеціального обходу                            |
+| Що робимо в тестах | UI project: `headless: false`; у CI — `xvfb-run` (headed + virtual display) |
+| Evidence           | `playwright.config.ts`, `.github/workflows/ci.yml`, `helper/cart.helper.ts` |
 
 ### U2 — Порожній checkout не показує inline-помилок
 

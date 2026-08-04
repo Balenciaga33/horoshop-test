@@ -1,7 +1,6 @@
 import { expect, test } from '../../fixtures/base.fixtures';
 import { requireApiCredentials } from '../../api/config';
 import { authErrorSchema, authSuccessSchema, parseSchema } from '../../api/schemas/api.schemas';
-import { assertOperationExists, loadOpenApiDoc } from '../../helper/openapi.helper';
 
 test.describe('API: авторизація', () => {
   test(
@@ -9,11 +8,6 @@ test.describe('API: авторизація', () => {
     { tag: '@p0' },
     async ({ authClient }) => {
       const credentials = requireApiCredentials();
-
-      await test.step('OpenAPI contract містить auth', async () => {
-        assertOperationExists(loadOpenApiDoc(), '/api/auth/', 'post');
-      });
-
       const response = await authClient.auth(credentials);
 
       await test.step('HTTP 200 + Zod-схема успішної відповіді', async () => {
