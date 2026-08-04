@@ -131,7 +131,9 @@ export class CheckoutPage extends BasePage {
       .poll(async () => this.emailInput.evaluate((el: HTMLInputElement) => el.checkValidity()))
       .toBe(false);
     await expect
-      .poll(async () => this.emailInput.evaluate((el: HTMLInputElement) => el.validationMessage.length))
+      .poll(async () =>
+        this.emailInput.evaluate((el: HTMLInputElement) => el.validationMessage.length),
+      )
       .toBeGreaterThan(0);
   }
 

@@ -30,9 +30,6 @@ export class HomePage extends BasePage {
   async searchFor(query: string): Promise<void> {
     await this.searchButton.click();
     await this.searchInput.fill(query);
-    await Promise.all([
-      this.page.waitForURL(/\/katalog\/search\//),
-      this.searchButton.click(),
-    ]);
+    await Promise.all([this.page.waitForURL(/\/katalog\/search\//), this.searchButton.click()]);
   }
 }

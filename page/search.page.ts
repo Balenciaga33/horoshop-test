@@ -26,7 +26,9 @@ export class SearchPage extends BasePage {
 
   async expectLoaded(query: string): Promise<void> {
     await expect(this.page).toHaveURL(/\/katalog\/search\//);
-    await expect(this.page).toHaveURL(new RegExp(`q=${encodeURIComponent(query).replace(/%20/g, '[+ ]')}`));
+    await expect(this.page).toHaveURL(
+      new RegExp(`q=${encodeURIComponent(query).replace(/%20/g, '[+ ]')}`),
+    );
     await expect(this.title).toContainText('Результати пошуку');
     await expect(this.title).toContainText(query);
     await expect(this.searchInput).toHaveValue(query);

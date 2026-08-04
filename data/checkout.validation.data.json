@@ -5,11 +5,6 @@
     "cityQuery": "Київ",
     "validEmail": "test@example.com"
   },
-  "invalidEmails": [
-    "bad-email",
-    "test@",
-    "test@@example.com",
-    "test example@mail.com"
-  ],
+  "invalidEmails": ["bad-email", "test@", "test@@example.com", "test example@mail.com"],
   "incompletePhoneDigits": "50"
 }

@@ -61,7 +61,7 @@ export function parseSchema<T>(schema: z.ZodType<T>, payload: unknown, label: st
   return result.data;
 }
 
-function formatZodError(result: z.SafeParseReturnType<unknown, unknown>): string {
+function formatZodError(result: { success: true } | { success: false; error: z.ZodError }): string {
   if (result.success) {
     return '';
   }

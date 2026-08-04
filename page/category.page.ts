@@ -53,11 +53,13 @@ export class CategoryPage extends BasePage {
   }
 
   async productHrefs(): Promise<string[]> {
-    const hrefs = await this.productCards.locator('a.catalogCard-image').evaluateAll((links) =>
-      links
-        .map((link) => link.getAttribute('href'))
-        .filter((href): href is string => Boolean(href)),
-    );
+    const hrefs = await this.productCards
+      .locator('a.catalogCard-image')
+      .evaluateAll((links) =>
+        links
+          .map((link) => link.getAttribute('href'))
+          .filter((href): href is string => Boolean(href)),
+      );
     return [...new Set(hrefs)].sort();
   }
 

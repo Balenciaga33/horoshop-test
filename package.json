@@ -7,7 +7,15 @@
     "test": "playwright test",
     "test:ui": "playwright test --project=ui",
     "test:api": "playwright test --project=api",
+    "test:p0": "playwright test --grep @p0",
+    "test:p0:api": "playwright test --project=api --grep @p0",
+    "test:p0:ui": "playwright test --project=ui --grep @p0",
     "test:headed": "playwright test --project=ui --headed",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc --noEmit",
     "report": "playwright show-report"
   },
   "repository": {
@@ -23,10 +31,17 @@
   },
   "homepage": "https://github.com/Balenciaga33/horoshop-test#readme",
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.62.1",
     "@types/node": "^26.1.2",
     "dotenv": "^17.4.2",
-    "typescript": "^7.0.2",
+    "eslint": "^10.8.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-playwright": "^2.11.0",
+    "globals": "^17.9.0",
+    "prettier": "3.9.6",
+    "typescript": "~5.8.3",
+    "typescript-eslint": "^8.66.0",
     "zod": "^4.4.3"
   }
 }

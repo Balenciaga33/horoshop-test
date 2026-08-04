@@ -91,10 +91,7 @@ export class CartPage extends BasePage {
 
   async goToCheckout(): Promise<void> {
     await expect(this.checkoutLink).toBeVisible();
-    await Promise.all([
-      this.page.waitForURL(/\/checkout\/?/),
-      this.checkoutLink.click(),
-    ]);
+    await Promise.all([this.page.waitForURL(/\/checkout\/?/), this.checkoutLink.click()]);
   }
 
   async expectEmptyHeader(): Promise<void> {

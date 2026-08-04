@@ -1,44 +1,48 @@
 import { expect, test } from '../../fixtures/base.fixtures';
 import { requireApiCredentials } from '../../api/config';
-import {
-  authErrorSchema,
-  authSuccessSchema,
-  parseSchema,
-} from '../../api/schemas/api.schemas';
+import { authErrorSchema, authSuccessSchema, parseSchema } from '../../api/schemas/api.schemas';
 import { assertOperationExists, loadOpenApiDoc } from '../../helper/openapi.helper';
 
 test.describe('API: авторизація', () => {
-  test('Успішний POST /api/auth/ повертає OK і токен (32 символи)', async ({ authClient }) => {
-    const credentials = requireApiCredentials();
+  test(
+    'Успішний POST /api/auth/ повертає OK і токен (32 символи)',
+    { tag: '@p0' },
+    async ({ authClient }) => {
+      const credentials = requireApiCredentials();
 
-    await test.step('OpenAPI contract містить auth', async () => {
-      assertOperationExists(loadOpenApiDoc(), '/api/auth/', 'post');
-    });
+      await test.step('OpenAPI contract містить auth', async () => {
+        assertOperationExists(loadOpenApiDoc(), '/api/auth/', 'post');
+      });
 
-    const response = await authClient.auth(credentials);
+      const response = await authClient.auth(credentials);
 
-    await test.step('HTTP 200 + Zod-схема успішної відповіді', async () => {
-      expect(response.status()).toBe(200);
-      const body = await authClient.expectJson(response);
-      const parsed = parseSchema(authSuccessSchema, body, 'auth success');
-      expect(parsed.response.token).toHaveLength(32);
-    });
-  });
+      await test.step('HTTP 200 + Zod-схема успішної відповіді', async () => {
+        expect(response.status()).toBe(200);
+        const body = await authClient.expectJson(response);
+        const parsed = parseSchema(authSuccessSchema, body, 'auth success');
+        expect(parsed.response.token).toHaveLength(32);
+      });
+    },
+  );
 
-  test('Невалідний POST /api/auth/ повертає ERROR і message', async ({ authClient }) => {
-    const { login } = requireApiCredentials();
+  test(
+    'Невалідний POST /api/auth/ повертає ERROR і message',
+    { tag: '@p0' },
+    async ({ authClient }) => {
+      const { login } = requireApiCredentials();
 
-    const response = await authClient.auth({
-      login,
-      password: 'definitely-wrong-password',
-    });
+      const response = await authClient.auth({
+        login,
+        password: 'definitely-wrong-password',
+      });
 
-    await test.step('HTTP 200 + Zod-схема помилки (бізнес-статус ERROR)', async () => {
-      // Horoshop returns HTTP 200 even for bad credentials; result is in status/message.
-      expect(response.status()).toBe(200);
-      const body = await authClient.expectJson(response);
-      const parsed = parseSchema(authErrorSchema, body, 'auth error');
-      expect(parsed.response.message.length).toBeGreaterThan(0);
-    });
-  });
+      await test.step('HTTP 200 + Zod-схема помилки (бізнес-статус ERROR)', async () => {
+        // Horoshop returns HTTP 200 even for bad credentials; result is in status/message.
+        expect(response.status()).toBe(200);
+        const body = await authClient.expectJson(response);
+        const parsed = parseSchema(authErrorSchema, body, 'auth error');
+        expect(parsed.response.message.length).toBeGreaterThan(0);
+      });
+    },
+  );
 });
