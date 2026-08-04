@@ -1,0 +1,15 @@
+{
+  "recipient": {
+    "name": "Тест Тестовий",
+    "phoneMasked": "+38 (050) 123-45-67",
+    "cityQuery": "Київ",
+    "validEmail": "test@example.com"
+  },
+  "invalidEmails": [
+    "bad-email",
+    "test@",
+    "test@@example.com",
+    "test example@mail.com"
+  ],
+  "incompletePhoneDigits": "50"
+}

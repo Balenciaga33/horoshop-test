@@ -8,7 +8,10 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
   use: {
-    baseURL: 'http://localhost:3000',
+    baseURL: 'https://shop703343.horoshop.ua',
+    // Horoshop cart AJAX returns BAD_CSRF under headless Chromium.
+    headless: false,
+    locale: 'uk-UA',
     trace: 'on-first-retry',
   },
   projects: [
