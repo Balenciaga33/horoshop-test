@@ -1,5 +1,7 @@
 # horoshop-test
 
+[![CI](https://github.com/Balenciaga33/horoshop-test/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Balenciaga33/horoshop-test/actions/workflows/ci.yml?query=branch%3Amain)
+
 Автоматизовані UI- та API-тести для демо-магазину [Horoshop](https://shop703343.horoshop.ua) на **Playwright** + **TypeScript**.
 
 Фреймворк зібрано з розрахунком на подальше розширення: Page Object Model, API-клієнти, Zod-схеми, локальний OpenAPI-контракт, фікстури, пріоритетні теги та явна фіксація drift продукту.
