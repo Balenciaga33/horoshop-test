@@ -58,17 +58,15 @@ API і UI навмисно розділені: різний runtime (без бр
 3. `npm run typecheck`
 4. `@p0` API + UI (`test:p0:api` / `test:p0:ui`)
 
-Локально ті самі команди — для швидкої перевірки до push. Повний `npm test` — на push у `main`/`master`, через `workflow_dispatch`, або локально перед великими змінами.
+Локально ті самі команди — для швидкої перевірки до push. Повний набір — на push у `main`/`master` (або локально перед великими змінами).
 
 ## CI
 
 GitHub Actions (`.github/workflows/ci.yml`):
 
 1. **quality** — lint / format / typecheck (без secrets)
-2. **api** — після quality; на PR лише `@p0`, на push/`workflow_dispatch` — усі API
+2. **api** — після quality; на PR лише `@p0`, на push — усі API
 3. **ui** — після **api** (fail-fast); headed Chromium через `xvfb-run` (див. KNOWN-ISSUES **U1**)
-
-Ручний запуск: GitHub → **Actions → CI → Run workflow**.
 
 Secrets: `HOROSHOP_LOGIN`, `HOROSHOP_PASSWORD`. Опційний variable: `HOROSHOP_BASE_URL`.
 

@@ -62,8 +62,6 @@ HOROSHOP_LOGIN=<login>
 HOROSHOP_PASSWORD=<password>
 ```
 
-Ті самі credentials, що для CMS (адмінка магазину): ними викликається Horoshop API `/auth`.
-
 ## Запуск тестів
 
 | Команда               | Що робить                                       |
@@ -77,12 +75,6 @@ HOROSHOP_PASSWORD=<password>
 | `npm run test:headed` | UI у headed-режимі (для UI це дефолт у конфігу) |
 | `npm run report`      | HTML-звіт Playwright                            |
 
-Приклади точково:
-
-```bash
-npx playwright test tests/ui/cart.add-product.spec.ts
-npx playwright test tests/api/auth.spec.ts --project=api
-```
 
 > **Важливо:** UI-проєкт запускається з `headless: false`. У headless Chromium кошик Horoshop часто відповідає `BAD_CSRF` — див. [KNOWN-ISSUES.md](docs/KNOWN-ISSUES.md) (U1).
 
@@ -115,8 +107,6 @@ Workflow: [`.github/workflows/ci.yml`](.github/workflows/ci.yml)
 | `HOROSHOP_BASE_URL` | variable | ні          | дефолт `https://shop703343.horoshop.ua` |
 
 Звіти Playwright заливаються як artifacts (`playwright-report-api` / `playwright-report-ui`).
-
-Ручний запуск: **Actions → CI → Run workflow** (`workflow_dispatch`). Обери гілку (наприклад `staging`) і Run.
 
 ## Документація
 
