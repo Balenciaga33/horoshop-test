@@ -1,4 +1,4 @@
-import { expect, test } from '../../fixtures/base.fixtures';
+import { annotateKnownIssue, expect, test } from '../../fixtures/base.fixtures';
 import products from '../../data/products.data.json';
 import {
   authorizationErrorSchema,
@@ -15,6 +15,8 @@ test.describe('API: каталог', () => {
     'POST /api/catalog/export/ з токеном повертає products',
     { tag: '@p0' },
     async ({ catalogClient, apiToken }) => {
+      annotateKnownIssue('A1', 'Business result in body status — HTTP stays 200');
+
       const response = await catalogClient.export(apiToken);
       expect(response.status()).toBe(200);
       const body = await catalogClient.expectJson(response);
@@ -38,6 +40,8 @@ test.describe('API: каталог', () => {
     'POST /api/catalog/export/ без токена повертає AUTHORIZATION_ERROR',
     { tag: '@p0' },
     async ({ catalogClient }) => {
+      annotateKnownIssue('A1', 'Authz failure still returns HTTP 200');
+
       const response = await catalogClient.exportWithoutToken();
 
       await test.step('HTTP 200 + Zod-схема AUTHORIZATION_ERROR', async () => {
@@ -53,6 +57,8 @@ test.describe('API: каталог', () => {
     'POST /api/catalog/export/ з невалідним токеном повертає UNAUTHORIZED',
     { tag: '@p1' },
     async ({ catalogClient }) => {
+      annotateKnownIssue('A1', 'Authz failure still returns HTTP 200');
+
       const response = await catalogClient.export('00000000000000000000000000000000');
 
       await test.step('HTTP 200 + Zod-схема UNAUTHORIZED', async () => {

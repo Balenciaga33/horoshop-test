@@ -1,4 +1,4 @@
-import { test } from '../../fixtures/base.fixtures';
+import { annotateKnownIssue, test } from '../../fixtures/base.fixtures';
 import products from '../../data/products.data.json';
 import { formatUah } from '../../helper/price.helper';
 
@@ -11,6 +11,9 @@ test.describe('Кошик: оновлення', () => {
     'Зміна кількості та видалення з перерахунком суми',
     { tag: '@p1' },
     async ({ productPage, cartPage, checkoutPage }) => {
+      annotateKnownIssue('U1', 'Cart AJAX BAD_CSRF in headless — UI runs headed');
+      annotateKnownIssue('U2', 'Popup remove flaky — delete on checkout instead');
+
       await test.step('Додати товар до кошика', async () => {
         await productPage.open(product.slug);
         await productPage.addToCart();

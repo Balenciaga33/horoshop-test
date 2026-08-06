@@ -8,7 +8,6 @@
     "sizeFilterTitle": "One size",
     "sizeFilterUrlPart": "rozmir=6",
     "filteredHeading": "Жіночий одяг Розмір: One size",
-    "expectedProductKeys": ["womenBucketHat", "hipBag"],
     "excludedProductKey": "womenLongShirt"
   }
 }

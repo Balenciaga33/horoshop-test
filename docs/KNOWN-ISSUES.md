@@ -2,7 +2,7 @@
 
 Проблеми / невідповідності, помічені під час побудови сьюту проти `https://shop703343.horoshop.ua`.
 
-Правило сьюту: **асертимо фактичну поведінку**, тримаємо тести зеленими й явно фіксуємо drift тут. У коді можна додати Playwright-анотацію через `annotateKnownIssue('ID', '…')` — ID має збігатися з цим файлом.
+Правило сьюту: **асертимо фактичну поведінку**, тримаємо тести зеленими й фіксуємо quirks тут. Тести з обходом/залежністю від issue анотують його через `annotateKnownIssue('ID', '…')` (видно в HTML-звіті).
 
 ID йдуть по порядку в межах префікса: `U1`, `U2`, … / `A1`, `A2`, …
 
@@ -18,7 +18,7 @@ ID йдуть по порядку в межах префікса: `U1`, `U2`, �
 | Факт               | `/_widget/ajax_cart/init/` часто падає з `BAD_CSRF` у headless              |
 | Ризик              | False fail у CI без headed / спеціального обходу                            |
 | Що робимо в тестах | UI project: `headless: false`; у CI — `xvfb-run` (headed + virtual display) |
-| Evidence           | `playwright.config.ts`, `.github/workflows/ci.yml`, `helper/cart.helper.ts` |
+| Evidence           | `playwright.config.ts`, `.github/workflows/ci.yml`, `helper/cart.helper.ts`, `tests/ui/cart.add-product.spec.ts` |
 
 ### U2 — Remove в popup-кошику майже неклікабельний (поганий UX)
 
@@ -52,7 +52,7 @@ ID йдуть по порядку в межах префікса: `U1`, `U2`, �
 | Факт               | Документація в Notion; у репо — `openapi/horoshop.openapi.json` |
 | Ризик              | Контракт може роз’їхатися з релізами Horoshop                   |
 | Що робимо в тестах | Локальний OpenAPI + Zod; оновлювати обидва при drift            |
-| Evidence           | `openapi/horoshop.openapi.json`, `helper/openapi.helper.ts`     |
+| Evidence           | `openapi/horoshop.openapi.json`, `helper/openapi.helper.ts`, `tests/api/openapi/contract.spec.ts` |
 
 ---
 

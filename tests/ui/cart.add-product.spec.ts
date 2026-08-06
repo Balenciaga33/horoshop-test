@@ -1,4 +1,4 @@
-import { expect, test } from '../../fixtures/base.fixtures';
+import { annotateKnownIssue, expect, test } from '../../fixtures/base.fixtures';
 import products from '../../data/products.data.json';
 
 const product = products.gentleSkinCleanser;
@@ -8,6 +8,8 @@ test.describe('Кошик: додавання товару', () => {
     'Позитивний сценарій: сторінка товару → кошик → оформлення замовлення',
     { tag: '@p0' },
     async ({ productPage, cartPage, checkoutPage }) => {
+      annotateKnownIssue('U1', 'Cart AJAX BAD_CSRF in headless — UI runs headed');
+
       await test.step('Відкрити сторінку товару', async () => {
         await productPage.open(product.slug);
         await productPage.expectLoaded(product.name);

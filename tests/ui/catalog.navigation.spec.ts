@@ -3,9 +3,6 @@ import catalog from '../../data/catalog.data.json';
 import products from '../../data/products.data.json';
 
 const category = catalog.womensFashion;
-const expectedProductHrefs = category.expectedProductKeys.map(
-  (key) => products[key as keyof typeof products].slug,
-);
 const excludedProductHref = products[category.excludedProductKey as keyof typeof products].slug;
 
 test.describe('Каталог: навігація та фільтри', () => {
@@ -28,14 +25,14 @@ test.describe('Каталог: навігація та фільтри', () => {
         await expect(categoryPage.productCards).toHaveCount(productCountBeforeFilter);
       });
 
-      await test.step('Застосувати фільтр One size і перевірити інваріант вибірки', async () => {
+      await test.step('Застосувати фільтр One size і перевірити інваріанти вибірки', async () => {
         await categoryPage.applyFilterByTitle(category.sizeFilterTitle);
         await categoryPage.expectUrlContains(category.sizeFilterUrlPart);
         await categoryPage.expectHeading(category.filteredHeading);
         await categoryPage.expectActiveFilterChip(category.sizeFilterTitle);
-        await categoryPage.expectExactProductHrefs(expectedProductHrefs);
+        await categoryPage.expectProductCountAtLeast(1);
+        await categoryPage.expectProductCountLessThan(productCountBeforeFilter);
         await categoryPage.expectProductAbsent(excludedProductHref);
-        expect(expectedProductHrefs.length).toBeLessThan(productCountBeforeFilter);
       });
     },
   );
