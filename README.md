@@ -102,8 +102,8 @@ Workflow: [`.github/workflows/ci.yml`](.github/workflows/ci.yml)
 
 | Назва               | Тип      | Обов’язково | Призначення                             |
 | ------------------- | -------- | ----------- | --------------------------------------- |
-| `HOROSHOP_LOGIN`    | secret   | так         | логін CMS (власник магазину)            |
-| `HOROSHOP_PASSWORD` | secret   | так         | пароль CMS                              |
+| `HOROSHOP_LOGIN`    | secret   | так         | логін           |
+| `HOROSHOP_PASSWORD` | secret   | так         | пароль                             |
 | `HOROSHOP_BASE_URL` | variable | ні          | дефолт `https://shop703343.horoshop.ua` |
 
 Звіти Playwright заливаються як artifacts (`playwright-report-api` / `playwright-report-ui`).
