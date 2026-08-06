@@ -1,4 +1,4 @@
-import { expect, test } from '../../../fixtures/base.fixtures';
+import { annotateKnownIssue, expect, test } from '../../../fixtures/base.fixtures';
 import {
   assertOperationExists,
   documentedBusinessStatusEnum,
@@ -28,6 +28,8 @@ test.describe('API OpenAPI contract smoke', () => {
   ] as const;
 
   test('критичні paths існують із очікуваними HTTP-кодами', { tag: '@p0' }, async () => {
+    annotateKnownIssue('A2', 'No live /api/doc.json — assert local OpenAPI anchor');
+
     const doc = loadOpenApiDoc();
 
     for (const op of criticalOperations) {
@@ -39,7 +41,9 @@ test.describe('API OpenAPI contract smoke', () => {
     }
   });
 
-  test('catalog/export документує бізнес-статуси authz (A2)', { tag: '@p0' }, async () => {
+  test('catalog/export документує бізнес-статуси authz', { tag: '@p0' }, async () => {
+    annotateKnownIssue('A2', 'No live /api/doc.json — assert local OpenAPI anchor');
+
     const doc = loadOpenApiDoc();
     const statuses = documentedBusinessStatusEnum(doc, '/api/catalog/export/', 'post');
 

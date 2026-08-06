@@ -1,4 +1,4 @@
-import { expect, test } from '../../fixtures/base.fixtures';
+import { annotateKnownIssue, expect, test } from '../../fixtures/base.fixtures';
 import { requireApiCredentials } from '../../api/config';
 import { authErrorSchema, authSuccessSchema, parseSchema } from '../../api/schemas/api.schemas';
 
@@ -7,6 +7,8 @@ test.describe('API: авторизація', () => {
     'Успішний POST /api/auth/ повертає OK і токен (32 символи)',
     { tag: '@p0' },
     async ({ authClient }) => {
+      annotateKnownIssue('A1', 'Business result in body status — HTTP stays 200');
+
       const credentials = requireApiCredentials();
       const response = await authClient.auth(credentials);
 
@@ -23,6 +25,8 @@ test.describe('API: авторизація', () => {
     'Невалідний POST /api/auth/ повертає ERROR і message',
     { tag: '@p0' },
     async ({ authClient }) => {
+      annotateKnownIssue('A1', 'Business errors still return HTTP 200');
+
       const { login } = requireApiCredentials();
 
       const response = await authClient.auth({

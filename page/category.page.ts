@@ -44,28 +44,16 @@ export class CategoryPage extends BasePage {
     await expect.poll(async () => this.productCards.count()).toBeGreaterThanOrEqual(min);
   }
 
+  async expectProductCountLessThan(maxExclusive: number): Promise<void> {
+    await expect.poll(async () => this.productCards.count()).toBeLessThan(maxExclusive);
+  }
+
   async expectHeading(text: string): Promise<void> {
     await expect(this.title).toHaveText(text);
   }
 
   async expectActiveFilterChip(label: string): Promise<void> {
     await expect(this.activeFilterChip).toContainText(label);
-  }
-
-  async productHrefs(): Promise<string[]> {
-    const hrefs = await this.productCards
-      .locator('a.catalogCard-image')
-      .evaluateAll((links) =>
-        links
-          .map((link) => link.getAttribute('href'))
-          .filter((href): href is string => Boolean(href)),
-      );
-    return [...new Set(hrefs)].sort();
-  }
-
-  async expectExactProductHrefs(expectedHrefs: string[]): Promise<void> {
-    const expected = [...expectedHrefs].sort();
-    await expect.poll(async () => this.productHrefs()).toEqual(expected);
   }
 
   async expectProductAbsent(href: string): Promise<void> {
