@@ -1,5 +1,7 @@
 # horoshop-test
 
+[![CI](https://github.com/Balenciaga33/horoshop-test/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Balenciaga33/horoshop-test/actions/workflows/ci.yml?query=branch%3Amain)
+
 Автоматизовані UI- та API-тести для демо-магазину [Horoshop](https://shop703343.horoshop.ua) на **Playwright** + **TypeScript**.
 
 Фреймворк зібрано з розрахунком на подальше розширення: Page Object Model, API-клієнти, Zod-схеми, локальний OpenAPI-контракт, фікстури, пріоритетні теги та явна фіксація drift продукту.
@@ -75,7 +77,6 @@ HOROSHOP_PASSWORD=<password>
 | `npm run test:headed` | UI у headed-режимі (для UI це дефолт у конфігу) |
 | `npm run report`      | HTML-звіт Playwright                            |
 
-
 > **Важливо:** UI-проєкт запускається з `headless: false`. У headless Chromium кошик Horoshop часто відповідає `BAD_CSRF` — див. [KNOWN-ISSUES.md](docs/KNOWN-ISSUES.md) (U1).
 
 ## Якість коду
@@ -102,8 +103,8 @@ Workflow: [`.github/workflows/ci.yml`](.github/workflows/ci.yml)
 
 | Назва               | Тип      | Обов’язково | Призначення                             |
 | ------------------- | -------- | ----------- | --------------------------------------- |
-| `HOROSHOP_LOGIN`    | secret   | так         | логін           |
-| `HOROSHOP_PASSWORD` | secret   | так         | пароль                             |
+| `HOROSHOP_LOGIN`    | secret   | так         | логін                                   |
+| `HOROSHOP_PASSWORD` | secret   | так         | пароль                                  |
 | `HOROSHOP_BASE_URL` | variable | ні          | дефолт `https://shop703343.horoshop.ua` |
 
 Звіти Playwright заливаються як artifacts (`playwright-report-api` / `playwright-report-ui`).
