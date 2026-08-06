@@ -25,10 +25,6 @@
    - `fixtures/base.fixtures.ts` для wiring
 5. **Дані** тримайте в `data/*.json` (особливо товари — `products.data.json`)
 6. Для API-відповідей оновіть Zod у `api/schemas/`, path у `openapi/horoshop.openapi.json` і рядок у `tests/api/openapi/contract.spec.ts`
-7. Якщо фактична поведінка відрізняється від документації або «здорового глузду»:
-   - фіксуйте **реальну** поведінку в асерті
-   - додайте запис у [docs/KNOWN-ISSUES.md](docs/KNOWN-ISSUES.md)
-   - у тесті викличте `annotateKnownIssue('ID', 'короткий опис')`
 
 ## Page Object / API Client
 

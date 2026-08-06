@@ -39,7 +39,7 @@ test.describe('API OpenAPI contract smoke', () => {
     }
   });
 
-  test('catalog/export документує бізнес-статуси authz (A2)', { tag: '@p0' }, async () => {
+  test('catalog/export документує бізнес-статуси authz', { tag: '@p0' }, async () => {
     const doc = loadOpenApiDoc();
     const statuses = documentedBusinessStatusEnum(doc, '/api/catalog/export/', 'post');
 

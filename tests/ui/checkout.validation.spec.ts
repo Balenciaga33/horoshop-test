@@ -1,4 +1,4 @@
-import { annotateKnownIssue, expect, test } from '../../fixtures/base.fixtures';
+import { expect, test } from '../../fixtures/base.fixtures';
 import products from '../../data/products.data.json';
 import validation from '../../data/checkout.validation.data.json';
 
@@ -22,7 +22,6 @@ test.describe('Checkout: валідація форми', () => {
     { tag: '@p0' },
     async ({ productPage, cartPage, checkoutPage }) => {
       await openCheckoutWithProduct(productPage, cartPage, checkoutPage);
-      annotateKnownIssue('U2', 'Порожній checkout без inline-помилок — гейт через disabled submit');
 
       await test.step('Перевірити disabled submit без заповнення', async () => {
         await checkoutPage.expectSubmitDisabled();
@@ -111,7 +110,6 @@ test.describe('Checkout: валідація форми', () => {
     { tag: '@p1' },
     async ({ productPage, cartPage, checkoutPage }) => {
       await openCheckoutWithProduct(productPage, cartPage, checkoutPage);
-      annotateKnownIssue('U3', 'Порожнє ПІБ не блокує submit після валідного заповнення');
 
       await checkoutPage.fillRecipient({
         name: recipient.name,
