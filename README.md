@@ -44,7 +44,7 @@ horoshop-test/
 
 - Node.js 20+ (рекомендовано LTS)
 - npm
-- доступ до магазину та API-користувача
+- доступ до credentials власника магазину (для API `/auth`)
 
 ## Швидкий старт
 
@@ -58,9 +58,11 @@ cp .env.example .env
 
 ```env
 HOROSHOP_BASE_URL=https://shop703343.horoshop.ua
-HOROSHOP_LOGIN=owner
-HOROSHOP_PASSWORD=<пароль>
+HOROSHOP_LOGIN=<login>
+HOROSHOP_PASSWORD=<password>
 ```
+
+Ті самі credentials, що для CMS (адмінка магазину): ними викликається Horoshop API `/auth`.
 
 ## Запуск тестів
 
@@ -108,8 +110,8 @@ Workflow: [`.github/workflows/ci.yml`](.github/workflows/ci.yml)
 
 | Назва               | Тип      | Обов’язково | Призначення                             |
 | ------------------- | -------- | ----------- | --------------------------------------- |
-| `HOROSHOP_LOGIN`    | secret   | так         | логін API                               |
-| `HOROSHOP_PASSWORD` | secret   | так         | пароль API                              |
+| `HOROSHOP_LOGIN`    | secret   | так         | логін CMS (власник магазину)            |
+| `HOROSHOP_PASSWORD` | secret   | так         | пароль CMS                              |
 | `HOROSHOP_BASE_URL` | variable | ні          | дефолт `https://shop703343.horoshop.ua` |
 
 Звіти Playwright заливаються як artifacts (`playwright-report-api` / `playwright-report-ui`).
@@ -126,4 +128,3 @@ Workflow: [`.github/workflows/ci.yml`](.github/workflows/ci.yml)
 ## Цільовий сайт
 
 - Вітрина: https://shop703343.horoshop.ua
-- Адмінка: https://shop703343.horoshop.ua/edit/ (не використовується в автотестах напряму)
