@@ -1,4 +1,4 @@
-import { expect, test } from '../../fixtures/base.fixtures';
+import { expect, test } from '../../fixtures/ui.fixtures';
 import products from '../../data/products.data.json';
 import searchData from '../../data/search.data.json';
 
@@ -15,9 +15,15 @@ test.describe('Пошук товарів', () => {
       });
 
       await test.step('Перевірити сторінку результатів', async () => {
-        await searchPage.expectLoaded(product.name);
-        await searchPage.expectProductInResults(product.slug);
-        await searchPage.expectFirstProductHref(product.slug);
+        await expect(page).toHaveURL(/\/katalog\/search\//);
+        await expect(page).toHaveURL(
+          new RegExp(`q=${encodeURIComponent(product.name).replace(/%20/g, '[+ ]')}`),
+        );
+        await expect(searchPage.title).toContainText('Результати пошуку');
+        await expect(searchPage.title).toContainText(product.name);
+        await expect(searchPage.searchInput).toHaveValue(product.name);
+        await expect(searchPage.productCards.first()).toBeVisible();
+        await expect(searchPage.productCardByHref(product.slug)).toHaveCount(1);
       });
 
       await test.step('Відкрити товар із результатів', async () => {

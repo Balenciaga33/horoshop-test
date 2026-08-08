@@ -5,7 +5,7 @@ export type OpenApiDocument = {
   paths?: Record<string, Record<string, { responses?: Record<string, unknown> }>>;
 };
 
-/** Horoshop publishes docs in Notion, not as live OpenAPI — we keep a local contract. */
+/** Horoshop публікує docs у Notion, не як live OpenAPI — тримаємо локальний контракт. */
 export function loadOpenApiDoc(): OpenApiDocument {
   const filePath = path.resolve(__dirname, '../openapi/horoshop.openapi.json');
   return JSON.parse(fs.readFileSync(filePath, 'utf8')) as OpenApiDocument;
@@ -27,7 +27,7 @@ export function assertOperationExists(doc: OpenApiDocument, apiPath: string, met
   documentedStatusCodes(doc, apiPath, method);
 }
 
-/** Best-effort: status.enum under responses.200 application/json schema. */
+/** За можливості: status.enum у схемі responses.200 application/json. */
 export function documentedBusinessStatusEnum(
   doc: OpenApiDocument,
   apiPath: string,

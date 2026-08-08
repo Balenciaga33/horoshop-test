@@ -1,33 +1,18 @@
-import { expect, test } from '../../fixtures/base.fixtures';
-import products from '../../data/products.data.json';
+import { expect, test } from '../../fixtures/checkout.fixtures';
 import validation from '../../data/checkout.validation.data.json';
 
-const product = products.gentleSkinCleanser;
 const recipient = validation.recipient;
-
-async function openCheckoutWithProduct(
-  productPage: { open: (slug: string) => Promise<void>; addToCart: () => Promise<void> },
-  cartPage: { goToCheckout: () => Promise<void> },
-  checkoutPage: { expectLoaded: () => Promise<void> },
-): Promise<void> {
-  await productPage.open(product.slug);
-  await productPage.addToCart();
-  await cartPage.goToCheckout();
-  await checkoutPage.expectLoaded();
-}
 
 test.describe('Checkout: валідація форми', () => {
   test(
     'Порожній checkout — кнопка оформлення неактивна',
     { tag: '@p0' },
-    async ({ productPage, cartPage, checkoutPage }) => {
-      await openCheckoutWithProduct(productPage, cartPage, checkoutPage);
-
+    async ({ onCheckout }) => {
       await test.step('Перевірити disabled submit без заповнення', async () => {
-        await checkoutPage.expectSubmitDisabled();
-        await expect(checkoutPage.nameInput).toHaveValue('');
-        await expect(checkoutPage.phoneInput).toHaveValue('');
-        await expect(checkoutPage.emailInput).toHaveValue('');
+        await onCheckout.expectSubmitDisabled();
+        await expect(onCheckout.nameInput).toHaveValue('');
+        await expect(onCheckout.phoneInput).toHaveValue('');
+        await expect(onCheckout.emailInput).toHaveValue('');
       });
     },
   );
@@ -35,18 +20,16 @@ test.describe('Checkout: валідація форми', () => {
   test(
     'Неповний телефон — кнопка оформлення лишається неактивною',
     { tag: '@p1' },
-    async ({ productPage, cartPage, checkoutPage }) => {
-      await openCheckoutWithProduct(productPage, cartPage, checkoutPage);
-
+    async ({ onCheckout }) => {
       await test.step('Заповнити ПІБ, місто, email і неповний телефон', async () => {
-        await checkoutPage.fillName(recipient.name);
-        await checkoutPage.selectCity(recipient.cityQuery);
-        await checkoutPage.fillEmail(recipient.validEmail);
-        await checkoutPage.typePhoneDigits(validation.incompletePhoneDigits);
+        await onCheckout.fillName(recipient.name);
+        await onCheckout.selectCity(recipient.cityQuery);
+        await onCheckout.fillEmail(recipient.validEmail);
+        await onCheckout.typePhoneDigits(validation.incompletePhoneDigits);
       });
 
       await test.step('Submit лишається disabled', async () => {
-        await checkoutPage.expectSubmitDisabled();
+        await onCheckout.expectSubmitDisabled();
       });
     },
   );
@@ -55,11 +38,9 @@ test.describe('Checkout: валідація форми', () => {
     test(
       `Невалідний email "${invalidEmail}" — HTML5 помилка і замовлення не відправляється`,
       { tag: '@p1' },
-      async ({ productPage, cartPage, checkoutPage }) => {
-        await openCheckoutWithProduct(productPage, cartPage, checkoutPage);
-
+      async ({ onCheckout }) => {
         await test.step('Заповнити форму з невалідним email', async () => {
-          await checkoutPage.fillRecipient({
+          await onCheckout.fillRecipient({
             name: recipient.name,
             phoneMasked: recipient.phoneMasked,
             cityQuery: recipient.cityQuery,
@@ -68,18 +49,18 @@ test.describe('Checkout: валідація форми', () => {
         });
 
         await test.step('Перевірити HTML5-валідацію email', async () => {
-          await checkoutPage.expectEmailInvalid();
+          await onCheckout.expectEmailInvalid();
         });
 
         await test.step('Спроба submit не змінює URL checkout', async () => {
-          // Native constraint validation may keep button enabled or not — click when possible.
-          if (await checkoutPage.submitButton.isEnabled()) {
-            await checkoutPage.submitOrder();
+          // Нативна HTML5-валідація може лишати кнопку enabled або ні — клікаємо, якщо можна.
+          if (await onCheckout.submitButton.isEnabled()) {
+            await onCheckout.submitOrder();
           } else {
-            await checkoutPage.expectSubmitDisabled();
+            await onCheckout.expectSubmitDisabled();
           }
-          await checkoutPage.expectStillOnCheckout();
-          await checkoutPage.expectEmailInvalid();
+          await onCheckout.expectStillOnCheckout();
+          await onCheckout.expectEmailInvalid();
         });
       },
     );
@@ -88,41 +69,41 @@ test.describe('Checkout: валідація форми', () => {
   test(
     'Валідний email проходить HTML5-перевірку після невалідного',
     { tag: '@p1' },
-    async ({ productPage, cartPage, checkoutPage }) => {
-      await openCheckoutWithProduct(productPage, cartPage, checkoutPage);
-
-      await checkoutPage.fillRecipient({
+    async ({ onCheckout }) => {
+      await onCheckout.fillRecipient({
         name: recipient.name,
         phoneMasked: recipient.phoneMasked,
         cityQuery: recipient.cityQuery,
         email: validation.invalidEmails[0],
       });
-      await checkoutPage.expectEmailInvalid();
+      await onCheckout.expectEmailInvalid();
 
-      await checkoutPage.fillEmail(recipient.validEmail);
-      await checkoutPage.expectEmailValid();
-      await checkoutPage.expectSubmitEnabled();
+      await onCheckout.fillEmail(recipient.validEmail);
+      await expect
+        .poll(async () =>
+          onCheckout.emailInput.evaluate((el: HTMLInputElement) => el.checkValidity()),
+        )
+        .toBe(true);
+      await onCheckout.expectSubmitEnabled();
     },
   );
 
   test(
     'Порожнє ПІБ при заповнених інших полях — submit може лишатися активним (поточна поведінка сайту)',
     { tag: '@p1' },
-    async ({ productPage, cartPage, checkoutPage }) => {
-      await openCheckoutWithProduct(productPage, cartPage, checkoutPage);
-
-      await checkoutPage.fillRecipient({
+    async ({ onCheckout }) => {
+      await onCheckout.fillRecipient({
         name: recipient.name,
         phoneMasked: recipient.phoneMasked,
         cityQuery: recipient.cityQuery,
         email: recipient.validEmail,
       });
-      await checkoutPage.expectSubmitEnabled();
+      await onCheckout.expectSubmitEnabled();
 
-      await checkoutPage.fillName('');
-      // Horoshop does not treat name as HTML5-required for enabling submit.
-      await checkoutPage.expectSubmitEnabled();
-      await expect(checkoutPage.nameInput).toHaveValue('');
+      await onCheckout.fillName('');
+      // Horoshop не вважає ПІБ HTML5-required для активації submit.
+      await onCheckout.expectSubmitEnabled();
+      await expect(onCheckout.nameInput).toHaveValue('');
     },
   );
 });

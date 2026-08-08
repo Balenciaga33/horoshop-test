@@ -1,10 +1,12 @@
-# horoshop-test
+# Horoshop UI & API Tests
 
 [![CI](https://github.com/Balenciaga33/horoshop-test/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Balenciaga33/horoshop-test/actions/workflows/ci.yml?query=branch%3Amain)
 
-Автоматизовані UI- та API-тести для демо-магазину [Horoshop](https://shop703343.horoshop.ua) на **Playwright** + **TypeScript**.
+Автоматизовані UI- та API-тести для демо-магазину Horoshop на **Playwright** + **TypeScript**.
 
-Фреймворк зібрано з розрахунком на подальше розширення: Page Object Model, API-клієнти, Zod-схеми, локальний OpenAPI-контракт, фікстури, пріоритетні теги та явна фіксація drift продукту.
+Цільова вітрина: [shop703343.horoshop.ua](https://shop703343.horoshop.ua).
+
+Фреймворк розрахований на розширення: Page Object Model, API-клієнти, Zod-схеми, локальний OpenAPI-контракт, фікстури, пріоритетні теги та фіксація drift продукту.
 
 ## Структура проєкту
 
@@ -18,7 +20,7 @@ horoshop-test/
 ├── docs/                     # Стратегія тестів і відомі проблеми
 │   ├── TEST-STRATEGY.md
 │   └── KNOWN-ISSUES.md
-├── fixtures/                 # Playwright fixtures (pages, API clients, token)
+├── fixtures/                 # api / ui / checkout / known-issue
 ├── helper/                   # Допоміжні утиліти (ціна, cart init, OpenAPI)
 ├── openapi/                  # Локальний контракт Horoshop API
 ├── page/                     # Page Object Model (UI)
@@ -38,13 +40,13 @@ horoshop-test/
 | `api/clients/` | HTTP-виклики Horoshop API                                  |
 | `api/schemas/` | Валідація JSON через Zod                                   |
 | `data/`        | Стабільні дані сценаріїв (slug, ціна, email-кейси)         |
-| `fixtures/`    | Зв’язка тестів із pages/clients                            |
+| `fixtures/`    | `api` / `ui` / `checkout` fixtures + `annotateKnownIssue`  |
 | `openapi/`     | Документований контракт (у магазину немає `/api/doc.json`) |
 | `docs/`        | Стратегія покриття + known issues / drift                  |
 
 ## Вимоги
 
-- Node.js 20+ (рекомендовано LTS)
+- Node.js 24 (рекомендовано LTS)
 - npm
 - доступ до credentials власника магазину (для API `/auth`)
 
@@ -60,24 +62,27 @@ cp .env.example .env
 
 ```env
 HOROSHOP_BASE_URL=https://shop703343.horoshop.ua
-HOROSHOP_LOGIN=<login>
-HOROSHOP_PASSWORD=<password>
+HOROSHOP_API_LOGIN=<login>
+HOROSHOP_API_PASSWORD=<password>
 ```
+
+`HOROSHOP_BASE_URL` — для UI і API. `HOROSHOP_API_*` — лише для API `/auth` (ті самі credentials, що в CMS).
 
 ## Запуск тестів
 
-| Команда               | Що робить                                       |
-| --------------------- | ----------------------------------------------- |
-| `npm test`            | Увесь набір (UI + API)                          |
-| `npm run test:ui`     | Лише UI (`tests/ui/`)                           |
-| `npm run test:api`    | Лише API (`tests/api/`)                         |
-| `npm run test:p0`     | Smoke / blocker-тести з тегом `@p0`             |
-| `npm run test:p0:ui`  | `@p0` лише UI                                   |
-| `npm run test:p0:api` | `@p0` лише API                                  |
-| `npm run test:headed` | UI у headed-режимі (для UI це дефолт у конфігу) |
-| `npm run report`      | HTML-звіт Playwright                            |
+| Команда               | Що робить                           |
+| --------------------- | ----------------------------------- |
+| `npm test`            | Увесь набір (UI + API)              |
+| `npm run test:ui`     | Лише UI (`tests/ui/`)               |
+| `npm run test:api`    | Лише API (`tests/api/`)             |
+| `npm run test:p0`     | Smoke / blocker-тести з тегом `@p0` |
+| `npm run test:p0:ui`  | `@p0` лише UI                       |
+| `npm run test:p0:api` | `@p0` лише API                      |
+| `npm run report`      | HTML-звіт Playwright                |
 
-> **Важливо:** UI-проєкт запускається з `headless: false`. У headless Chromium кошик Horoshop часто відповідає `BAD_CSRF` — див. [KNOWN-ISSUES.md](docs/KNOWN-ISSUES.md) (U1).
+> **Важливо:** UI у `playwright.config` з `headless: false` (BAD_CSRF у headless — [KNOWN-ISSUES.md](docs/KNOWN-ISSUES.md) U1). У CI — `xvfb-run` для віртуального дисплея.
+
+**Паралельність:** локально — `fullyParallel` + кілька workers (за замовчуванням Playwright); у CI — **1 worker** (послідовно), щоб стабілізувати headed UI і не впиратися в rate limit API.
 
 ## Якість коду
 
@@ -91,21 +96,22 @@ HOROSHOP_PASSWORD=<password>
 
 ## CI (GitHub Actions)
 
+Історія прогонів: [GitHub Actions](https://github.com/Balenciaga33/horoshop-test/actions)  
 Workflow: [`.github/workflows/ci.yml`](.github/workflows/ci.yml)
 
-| Job       | Що робить                                                                |
-| --------- | ------------------------------------------------------------------------ |
-| `quality` | `lint` → `format:check` → `typecheck`                                    |
-| `api`     | Playwright API після `quality` (`@p0` на PR / full на push); без browser |
-| `ui`      | UI після `api` (fail-fast): install Chromium + headed/`xvfb-run` (U1)    |
+| Job       | Що робить                                                                  |
+| --------- | -------------------------------------------------------------------------- |
+| `quality` | `lint` → `format:check` → `typecheck`                                      |
+| `api`     | Playwright API після `quality` (`@p0` на PR / full на push); без browser   |
+| `ui`      | UI після `api` (fail-fast): Chromium + `headless: false` / `xvfb-run` (U1) |
 
 ### Secrets / Variables (репозиторій GitHub)
 
-| Назва               | Тип      | Обов’язково | Призначення                             |
-| ------------------- | -------- | ----------- | --------------------------------------- |
-| `HOROSHOP_LOGIN`    | secret   | так         | логін                                   |
-| `HOROSHOP_PASSWORD` | secret   | так         | пароль                                  |
-| `HOROSHOP_BASE_URL` | variable | ні          | дефолт `https://shop703343.horoshop.ua` |
+| Назва                   | Тип      | Обов’язково | Призначення                             |
+| ----------------------- | -------- | ----------- | --------------------------------------- |
+| `HOROSHOP_API_LOGIN`    | secret   | так         | логін для API `/auth` (CMS)             |
+| `HOROSHOP_API_PASSWORD` | secret   | так         | пароль для API `/auth`                  |
+| `HOROSHOP_BASE_URL`     | variable | ні          | дефолт `https://shop703343.horoshop.ua` |
 
 Звіти Playwright заливаються як artifacts (`playwright-report-api` / `playwright-report-ui`).
 
@@ -115,7 +121,3 @@ Workflow: [`.github/workflows/ci.yml`](.github/workflows/ci.yml)
 - [Відомі проблеми / drift](docs/KNOWN-ISSUES.md) — фактична поведінка vs очікування
 - [Як додавати тести](CONTRIBUTING.md)
 - [Документація Horoshop API](https://horoshop.notion.site/api-doc)
-
-## Цільовий сайт
-
-- Вітрина: https://shop703343.horoshop.ua

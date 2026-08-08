@@ -1,7 +1,8 @@
 {
   "womensFashion": {
-    "parentHref": "/odyag-ta-vzuttya/",
-    "href": "/womens-fashion/",
+    "parentName": "Одяг та взуття",
+    "categoryName": "Жіночий одяг",
+    "categoryHref": "/womens-fashion/",
     "heading": "Жіночий одяг",
     "sortCheaperLabel": "спочатку дешевше",
     "sortCheaperUrlPart": "sort_price=ASC",

@@ -2,7 +2,7 @@ import type { APIResponse } from '@playwright/test';
 import { BaseApiClient } from './base.client';
 
 /**
- * Horoshop Catalog API — POST /api/catalog/export/
+ * Catalog API Horoshop — POST /api/catalog/export/
  * @see https://horoshop.notion.site/api-doc
  */
 export class CatalogClient extends BaseApiClient {

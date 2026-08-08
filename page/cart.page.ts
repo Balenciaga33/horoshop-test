@@ -2,41 +2,40 @@ import { type Locator, type Page, expect } from '@playwright/test';
 import { BasePage } from './base.page';
 
 /**
- * Mini-cart in header + cart popup (Horoshop basket widget).
- * Prefer stable attributes (href, j-* classes, ids) over UI copy.
+ * Міні-кошик у хедері + dialog «Кошик».
+ * Пріоритет: getByRole; порожній хедер / суми без a11y — scoped CSS.
  */
 export class CartPage extends BasePage {
   readonly basketHeader: Locator;
   readonly quantity: Locator;
   readonly totalSum: Locator;
   readonly cartPopup: Locator;
-  readonly cartPopupTitle: Locator;
   readonly checkoutLink: Locator;
 
   constructor(page: Page) {
     super(page);
+    // Порожній стан часто без aria-label «Кошик».
     this.basketHeader = page.locator('.j-basket-header');
-    this.quantity = page.locator('.j-basket-quantity');
-    this.totalSum = page.locator('.j-basket-total-sum');
-    this.cartPopup = page.locator('.popup.__cart');
-    this.cartPopupTitle = this.cartPopup.locator('#cart-title');
-    this.checkoutLink = this.cartPopup.locator('a[href="/checkout/"]');
+    this.quantity = this.basketHeader.locator('.j-basket-quantity');
+    this.totalSum = this.basketHeader.locator('.j-basket-total-sum');
+    this.cartPopup = page.getByRole('dialog', { name: 'Кошик' });
+    this.checkoutLink = this.cartPopup.getByRole('link', { name: 'Оформити замовлення' });
   }
 
   cartItemByName(name: string): Locator {
-    return this.cartPopup.locator('tr.cart-item').filter({ hasText: name });
+    return this.cartPopup.getByRole('row').filter({ hasText: name });
   }
 
   itemQuantityInput(name: string): Locator {
-    return this.cartItemByName(name).locator('input.j-quantity-p');
+    return this.cartItemByName(name).getByRole('textbox', { name: 'Кількість' });
   }
 
   itemIncreaseButton(name: string): Locator {
-    return this.cartItemByName(name).locator('button.j-increase-p');
+    return this.cartItemByName(name).getByRole('button', { name: 'Збільшити кількість' });
   }
 
   itemDecreaseButton(name: string): Locator {
-    return this.cartItemByName(name).locator('button.j-decrease-p');
+    return this.cartItemByName(name).getByRole('button', { name: 'Зменшити кількість' });
   }
 
   itemUnitPrice(name: string): Locator {
@@ -53,13 +52,6 @@ export class CartPage extends BasePage {
 
   async expectTotalSum(expected: string): Promise<void> {
     await expect(this.totalSum).toHaveText(expected);
-  }
-
-  async expectProductInCart(name: string): Promise<void> {
-    await expect(this.cartPopup).toBeVisible();
-    await expect(this.cartPopupTitle).toBeVisible();
-    await expect(this.cartItemByName(name)).toBeVisible();
-    await expect(this.checkoutLink).toBeVisible();
   }
 
   async expectItemState(
@@ -92,9 +84,5 @@ export class CartPage extends BasePage {
   async goToCheckout(): Promise<void> {
     await expect(this.checkoutLink).toBeVisible();
     await Promise.all([this.page.waitForURL(/\/checkout\/?/), this.checkoutLink.click()]);
-  }
-
-  async expectEmptyHeader(): Promise<void> {
-    await expect(this.quantity).toHaveText('0');
   }
 }

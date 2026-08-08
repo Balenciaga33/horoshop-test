@@ -9,8 +9,8 @@ export class HomePage extends BasePage {
   constructor(page: Page) {
     super(page);
     this.catalogNav = page.getByRole('navigation', { name: 'Каталог' });
-    this.searchInput = page.locator('input.j-search-input');
-    this.searchButton = page.locator('button.j-search-button');
+    this.searchInput = page.getByRole('textbox', { name: 'пошук товарів' });
+    this.searchButton = page.getByRole('button', { name: 'пошук товарів' });
   }
 
   async open(): Promise<void> {
@@ -18,15 +18,23 @@ export class HomePage extends BasePage {
   }
 
   /**
-   * Top-level catalog item is visible; subcategory appears on hover.
+   * Пункт каталогу верхнього рівня видимий; підкатегорія з’являється на hover.
+   * Підменю часто `visibility:hidden` до hover — клікаємо по href у межах nav.
    */
-  async openCategoryFromMenu(parentHref: string, categoryHref: string): Promise<void> {
+  async openCategoryFromMenu(
+    parentName: string,
+    categoryName: string,
+    categoryHref: string,
+  ): Promise<void> {
     await this.open();
-    await this.catalogNav.locator(`a[href="${parentHref}"]`).hover();
-    await this.catalogNav.locator(`a[href="${categoryHref}"]`).click();
+    await this.catalogNav.getByRole('link', { name: parentName, exact: true }).hover();
+    await this.catalogNav
+      .locator(`a[href="${categoryHref}"]`)
+      .filter({ hasText: categoryName })
+      .click();
   }
 
-  /** Header search is collapsed until the search button is clicked. */
+  /** Пошук у хедері згорнутий, доки не натиснути кнопку пошуку. */
   async searchFor(query: string): Promise<void> {
     await this.searchButton.click();
     await this.searchInput.fill(query);

@@ -1,8 +1,10 @@
 import { type Page, expect } from '@playwright/test';
 
 /**
- * Wait until Horoshop mini-cart widget finished CSRF-valid init.
- * Must be started before (or raced with) navigation that triggers init.
+ * Чекаємо, доки міні-кошик Horoshop завершить init з валідним CSRF.
+ * Треба стартувати до навігації (або паралельно з нею), яка тригерить init.
+ *
+ * Порожній кошик часто без accessible name «Кошик» — тому видимість через `.j-basket-header`.
  */
 export async function waitForCartWidgetReady(page: Page): Promise<void> {
   await page.waitForResponse(

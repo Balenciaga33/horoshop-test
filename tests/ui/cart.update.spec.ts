@@ -1,4 +1,4 @@
-import { annotateKnownIssue, test } from '../../fixtures/base.fixtures';
+import { annotateKnownIssue, expect, test } from '../../fixtures/ui.fixtures';
 import products from '../../data/products.data.json';
 import { formatUah } from '../../helper/price.helper';
 
@@ -10,9 +10,9 @@ test.describe('Кошик: оновлення', () => {
   test(
     'Зміна кількості та видалення з перерахунком суми',
     { tag: '@p1' },
-    async ({ productPage, cartPage, checkoutPage }) => {
-      annotateKnownIssue('U1', 'Cart AJAX BAD_CSRF in headless — UI runs headed');
-      annotateKnownIssue('U2', 'Popup remove flaky — delete on checkout instead');
+    async ({ page, productPage, cartPage, checkoutPage }) => {
+      annotateKnownIssue('U1', 'AJAX кошика BAD_CSRF у headless — UI у headed');
+      annotateKnownIssue('U2', 'Remove у popup нестабільний — видаляємо на checkout');
 
       await test.step('Додати товар до кошика', async () => {
         await productPage.open(product.slug);
@@ -34,14 +34,13 @@ test.describe('Кошик: оновлення', () => {
         await cartPage.increaseItemQuantity(product.name);
         await cartPage.expectItemState(product.name, 2, unitPrice, totalFor(2));
         await cartPage.goToCheckout();
-        await checkoutPage.expectLoaded();
         await checkoutPage.expectProductWithUnitPrice(product.name, 2, unitPrice, totalFor(2));
       });
 
       await test.step('Видалити товар і перевірити порожній кошик', async () => {
         await checkoutPage.removeProduct(product.name);
-        await checkoutPage.expectLeftCheckout();
-        await cartPage.expectEmptyHeader();
+        await expect(page).not.toHaveURL(/\/checkout\/?/);
+        await expect(cartPage.quantity).toHaveText('0');
       });
     },
   );

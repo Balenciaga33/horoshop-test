@@ -2,7 +2,7 @@ import type { APIRequestContext, APIResponse } from '@playwright/test';
 import { expect } from '@playwright/test';
 
 /**
- * Shared HTTP helpers for Horoshop JSON API clients.
+ * Спільні HTTP-хелпери для JSON API-клієнтів Horoshop.
  */
 export abstract class BaseApiClient {
   constructor(protected readonly request: APIRequestContext) {}
