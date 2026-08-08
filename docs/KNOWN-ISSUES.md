@@ -27,8 +27,8 @@ ID йдуть по порядку в межах префікса: `U1`, `U2`, �
 | Очікування         | Кнопка remove у popup стабільно видима й клікабельна                                                            |
 | Факт               | У popup елемент часто з `opacity/height ≈ 0` / погано досяжний — поганий UX і для користувача, і для автотестів |
 | Ризик              | Користувач не може нормально видалити з popup; UI-тести на popup remove флакають                                |
-| Що робимо в тестах | Видалення там, де кнопка **стабільно видима** — на checkout (`getByRole` «Видалити» + confirm dialog) |
-| Evidence           | `tests/ui/cart.update.spec.ts`, `page/checkout.page.ts`                                             |
+| Що робимо в тестах | Видалення там, де кнопка **стабільно видима** — на checkout (`getByRole` «Видалити» + confirm dialog)           |
+| Evidence           | `tests/ui/cart.update.spec.ts`, `page/checkout.page.ts`                                                         |
 
 ---
 
