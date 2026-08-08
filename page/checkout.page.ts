@@ -3,12 +3,14 @@ import { BasePage } from './base.page';
 
 export class CheckoutPage extends BasePage {
   readonly title: Locator;
+  /** Область товарів у замовленні (унікальний регіон без a11y-імені). */
   readonly orderList: Locator;
   readonly totalSum: Locator;
   readonly nameInput: Locator;
   readonly phoneInput: Locator;
   readonly cityInput: Locator;
   readonly emailInput: Locator;
+  /** Прихований id міста після autocomplete — без a11y-імені. */
   readonly cityIdInput: Locator;
   readonly submitButton: Locator;
 
@@ -17,20 +19,25 @@ export class CheckoutPage extends BasePage {
     this.title = page.getByRole('heading', { name: 'Оформлення замовлення', level: 1 });
     this.orderList = page.locator('ul.order-list');
     this.totalSum = page.locator('.j-total-sum');
-    this.nameInput = page.locator('#checkout-name');
-    this.phoneInput = page.locator('#checkout-phone');
-    this.cityInput = page.locator('#checkout-city');
-    this.emailInput = page.locator('#checkout-email');
+    // На сторінці кілька полів «Телефон»/«Е-пошта» (callback, login) — звужуємо через id.
+    this.nameInput = page.getByRole('textbox', { name: 'ПІБ' });
+    this.phoneInput = page
+      .getByRole('textbox', { name: 'Телефон' })
+      .and(page.locator('#checkout-phone'));
+    this.cityInput = page.getByRole('combobox', { name: 'Місто' });
+    this.emailInput = page
+      .getByRole('textbox', { name: 'Е-пошта' })
+      .and(page.locator('#checkout-email'));
     this.cityIdInput = page.locator('input[name="Recipient[delivery_city_id]"]');
     this.submitButton = page.getByRole('button', { name: 'Оформити замовлення' });
   }
 
   productItem(name: string): Locator {
-    return this.orderList.locator('li.order-i.j-cart-product').filter({ hasText: name });
+    return this.orderList.getByRole('listitem').filter({ hasText: name });
   }
 
   productQuantity(name: string): Locator {
-    return this.productItem(name).locator('input.j-quantity-p');
+    return this.productItem(name).getByRole('textbox', { name: 'Кількість' });
   }
 
   productPrice(name: string): Locator {
@@ -38,7 +45,7 @@ export class CheckoutPage extends BasePage {
   }
 
   productRemoveButton(name: string): Locator {
-    return this.productItem(name).locator('a.j-remove-p');
+    return this.productItem(name).getByRole('link', { name: 'Видалити' });
   }
 
   async expectLoaded(): Promise<void> {
@@ -66,7 +73,7 @@ export class CheckoutPage extends BasePage {
   async increaseItemQuantity(name: string): Promise<void> {
     const input = this.productQuantity(name);
     const current = Number(await input.inputValue());
-    await this.productItem(name).locator('button.j-increase-p').click();
+    await this.productItem(name).getByRole('button', { name: 'Збільшити кількість' }).click();
     await expect(input).toHaveValue(String(current + 1));
   }
 
@@ -75,10 +82,6 @@ export class CheckoutPage extends BasePage {
       await dialog.accept();
     });
     await this.productRemoveButton(name).click();
-  }
-
-  async expectLeftCheckout(): Promise<void> {
-    await expect(this.page).not.toHaveURL(/\/checkout\/?/);
   }
 
   async expectSubmitDisabled(): Promise<void> {
@@ -105,6 +108,7 @@ export class CheckoutPage extends BasePage {
 
   async selectCity(query: string): Promise<void> {
     await this.cityInput.fill(query);
+    // jQuery UI autocomplete — без стабільних a11y-ролей у списку підказок.
     await this.page.locator('.ui-menu-item, .ui-autocomplete li').first().click();
     await expect(this.cityIdInput).not.toHaveValue('');
   }
@@ -137,17 +141,11 @@ export class CheckoutPage extends BasePage {
       .toBeGreaterThan(0);
   }
 
-  async expectEmailValid(): Promise<void> {
-    await expect
-      .poll(async () => this.emailInput.evaluate((el: HTMLInputElement) => el.checkValidity()))
-      .toBe(true);
+  async expectStillOnCheckout(): Promise<void> {
+    await expect(this.page).toHaveURL(/\/checkout\/?/);
   }
 
   async submitOrder(): Promise<void> {
     await this.submitButton.click();
-  }
-
-  async expectStillOnCheckout(): Promise<void> {
-    await expect(this.page).toHaveURL(/\/checkout\/?/);
   }
 }

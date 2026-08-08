@@ -1,4 +1,4 @@
-import { type Locator, type Page, expect } from '@playwright/test';
+import { type Locator, type Page } from '@playwright/test';
 import { BasePage } from './base.page';
 
 export class SearchPage extends BasePage {
@@ -10,12 +10,12 @@ export class SearchPage extends BasePage {
     super(page);
     this.title = page.getByRole('heading', { level: 1 });
     this.productCards = page.locator('li.catalog-grid__item');
-    this.searchInput = page.locator('input.j-search-input');
+    this.searchInput = page.getByRole('textbox', { name: 'пошук товарів' });
   }
 
   productCardByHref(href: string): Locator {
     return this.productCards.filter({
-      has: this.page.locator(`a.catalogCard-image[href="${href}"]`),
+      has: this.page.locator(`a[href="${href}"]`),
     });
   }
 
@@ -24,32 +24,11 @@ export class SearchPage extends BasePage {
     await this.goto(`/katalog/search/?${params.toString()}`);
   }
 
-  async expectLoaded(query: string): Promise<void> {
-    await expect(this.page).toHaveURL(/\/katalog\/search\//);
-    await expect(this.page).toHaveURL(
-      new RegExp(`q=${encodeURIComponent(query).replace(/%20/g, '[+ ]')}`),
-    );
-    await expect(this.title).toContainText('Результати пошуку');
-    await expect(this.title).toContainText(query);
-    await expect(this.searchInput).toHaveValue(query);
-    await expect(this.productCards.first()).toBeVisible();
-  }
-
-  async expectProductInResults(href: string): Promise<void> {
-    await expect(this.productCardByHref(href)).toHaveCount(1);
-  }
-
-  async expectFirstProductHref(href: string): Promise<void> {
-    await expect(this.productCards.first().locator('a.catalogCard-image')).toHaveAttribute(
-      'href',
-      href,
-    );
-  }
-
   async openProduct(href: string): Promise<void> {
+    const productLink = this.productCardByHref(href).getByRole('link').first();
     await Promise.all([
       this.page.waitForURL(new RegExp(href.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))),
-      this.productCardByHref(href).locator('a.catalogCard-image').click(),
+      productLink.click(),
     ]);
   }
 }

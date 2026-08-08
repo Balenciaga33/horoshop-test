@@ -36,7 +36,7 @@ export default tseslint.config(
     ...playwright.configs['flat/recommended'],
     rules: {
       ...playwright.configs['flat/recommended'].rules,
-      // Intentional branching for site quirks (e.g. submit enabled/disabled).
+      // Навмисні гілки під quirks сайту (наприклад submit enabled/disabled).
       'playwright/no-conditional-in-test': 'off',
       'playwright/no-conditional-expect': 'off',
       'playwright/expect-expect': 'off',

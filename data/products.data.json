@@ -8,20 +8,10 @@
   },
   "womenBucketHat": {
     "name": "Women Bucket Hat",
-    "slug": "/women-bucket-hat/",
-    "price": "1 499 грн",
-    "unitPriceValue": 1499
-  },
-  "hipBag": {
-    "name": "Hip Bag",
-    "slug": "/hip-bag/",
-    "price": "1 299 грн",
-    "unitPriceValue": 1299
+    "slug": "/women-bucket-hat/"
   },
   "womenLongShirt": {
     "name": "Women Long Shirt",
-    "slug": "/women-long-shirt/",
-    "price": "899 грн",
-    "unitPriceValue": 899
+    "slug": "/women-long-shirt/"
   }
 }

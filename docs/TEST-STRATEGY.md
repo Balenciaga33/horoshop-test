@@ -13,10 +13,18 @@ API і UI навмисно розділені: різний runtime (без бр
 
 ## Пріоритети (теги)
 
-| Тег   | Значення                                       | Коли запускати             |
-| ----- | ---------------------------------------------- | -------------------------- |
-| `@p0` | Blocker / smoke: happy path + критичний authz  | PR / швидкий gate          |
-| `@p1` | Важливе покриття: edge cases, глибша валідація | Повний прогін (`npm test`) |
+| Тег   | Значення                                                           | Коли ганяти                |
+| ----- | ------------------------------------------------------------------ | -------------------------- |
+| `@p0` | Blocker / smoke: happy path + критичний authz                      | PR / швидкий gate          |
+| `@p1` | Важливе покриття: edge cases, глибша валідація, документація drift | Повний прогін (`npm test`) |
+
+Приклад:
+
+```ts
+test('Успішний POST /api/auth/ …', { tag: '@p0' }, async ({ authClient }) => {
+  // …
+});
+```
 
 Команди: `npm run test:p0`, `npm run test:p0:api`, `npm run test:p0:ui`.
 
@@ -30,14 +38,14 @@ API і UI навмисно розділені: різний runtime (без бр
 **@p1**
 
 - API: битий токен (`UNAUTHORIZED`)
-- UI: зміна кількості/видалення на checkout, невалідні email/телефон, recovery email, порожнє ПІБ
+- UI: зміна кількості/видалення, невалідні email/телефон, recovery email, порожнє ПІБ (документація поведінки)
 
 ## Що вважаємо «хорошим» асертом
 
 1. **Інваріанти**, а не випадковий UI-шум: slug, ціна, qty, `status` API, наявність/відсутність товарів у наборі
 2. **Негативні контроли** там, де є ризик false-positive (товар, якого не має бути після фільтра)
 3. **Zod** для форми API-відповіді; OpenAPI — як локальний контрактний якір
-4. Реальні quirks магазину (headless CSRF, remove у popup тощо) — у [KNOWN-ISSUES.md](KNOWN-ISSUES.md)
+4. Якщо продукт «дивно» себе веде — тест фіксує факт і посилається на [KNOWN-ISSUES.md](KNOWN-ISSUES.md)
 
 ## Піраміда в межах цього репо
 
@@ -49,29 +57,33 @@ API і UI навмисно розділені: різний runtime (без бр
 Дані + helpers + OpenAPI/Zod
 ```
 
+Новий сценарій спочатку питаємо: чи можна покрити API? Якщо відповідь «так і цього достатньо» — UI не обов’язковий.
+
 ## Quality gates
 
-На PR і push CI автоматично виконує:
+Перед merge бажано:
 
 1. `npm run lint`
 2. `npm run format:check`
 3. `npm run typecheck`
-4. `@p0` API + UI (`test:p0:api` / `test:p0:ui`)
+4. `npm run test:p0`
 
-Локально ті самі команди — для швидкої перевірки до push. Повний набір — на push у `main`/`master` (або локально перед великими змінами).
+Повний `npm test` — перед релізом / великими змінами.
 
 ## CI
 
 GitHub Actions (`.github/workflows/ci.yml`):
 
 1. **quality** — lint / format / typecheck (без secrets)
-2. **api** — після quality; на PR лише `@p0`, на push — усі API
-3. **ui** — після **api** (fail-fast); headed Chromium через `xvfb-run` (див. KNOWN-ISSUES **U1**)
+2. **api** — після quality; на PR лише `@p0`, на push/`workflow_dispatch` — усі API
+3. **ui** — після **api** (fail-fast); `headless: false` + `xvfb-run` у CI (див. KNOWN-ISSUES **U1**)
 
-Secrets: `HOROSHOP_LOGIN`, `HOROSHOP_PASSWORD`. Опційний variable: `HOROSHOP_BASE_URL`.
+Ручний запуск: GitHub → **Actions → CI → Run workflow**.
+
+Secrets: `HOROSHOP_API_LOGIN`, `HOROSHOP_API_PASSWORD`. Опційний variable: `HOROSHOP_BASE_URL`.
 
 ## Зовнішні обмеження магазину
 
 - Токен API живе **~600 секунд** (див. Notion docs)
-- Rate limit API (~100 req/год на токен) — не запускати важкий export у щільному циклі локально без потреби
+- Rate limit API (~100 req/год на токен) — не ганяти важкий export у щільному циклі локально без потреби
 - Успішне оформлення реального замовлення в UI-валідації **не робимо** (не смітимо адмінку)

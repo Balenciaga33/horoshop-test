@@ -1,10 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
-import dotenv from 'dotenv';
-import path from 'node:path';
 import { apiConfig } from './api/config';
 
-dotenv.config({ path: path.resolve(__dirname, '.env') });
-
+// .env підвантажується в api/config.ts
 export default defineConfig({
   testDir: './tests',
   fullyParallel: true,
@@ -23,7 +20,7 @@ export default defineConfig({
   projects: [
     {
       name: 'api',
-      testMatch: /tests\/api\/.*\.spec\.ts/,
+      testMatch: '**/tests/api/**/*.spec.ts',
       use: {
         extraHTTPHeaders: {
           Accept: 'application/json',
@@ -32,10 +29,10 @@ export default defineConfig({
     },
     {
       name: 'ui',
-      testMatch: /tests\/ui\/.*\.spec\.ts/,
+      testMatch: '**/tests/ui/**/*.spec.ts',
       use: {
         ...devices['Desktop Chrome'],
-        // Horoshop cart AJAX returns BAD_CSRF under headless Chromium.
+        // BAD_CSRF у headless (KNOWN-ISSUES U1) — UI завжди headed; у CI — xvfb-run.
         headless: false,
       },
     },

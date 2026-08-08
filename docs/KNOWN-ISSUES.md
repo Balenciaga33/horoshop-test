@@ -17,7 +17,7 @@ ID йдуть по порядку в межах префікса: `U1`, `U2`, �
 | Очікування         | UI-тести стабільно працюють у headless                                                                           |
 | Факт               | `/_widget/ajax_cart/init/` часто падає з `BAD_CSRF` у headless                                                   |
 | Ризик              | False fail у CI без headed / спеціального обходу                                                                 |
-| Що робимо в тестах | UI project: `headless: false`; у CI — `xvfb-run` (headed + virtual display)                                      |
+| Що робимо в тестах | UI: `headless: false` у `playwright.config`; у CI — `xvfb-run` (virtual display)                                 |
 | Evidence           | `playwright.config.ts`, `.github/workflows/ci.yml`, `helper/cart.helper.ts`, `tests/ui/cart.add-product.spec.ts` |
 
 ### U2 — Remove в popup-кошику майже неклікабельний (поганий UX)
@@ -27,8 +27,8 @@ ID йдуть по порядку в межах префікса: `U1`, `U2`, �
 | Очікування         | Кнопка remove у popup стабільно видима й клікабельна                                                            |
 | Факт               | У popup елемент часто з `opacity/height ≈ 0` / погано досяжний — поганий UX і для користувача, і для автотестів |
 | Ризик              | Користувач не може нормально видалити з popup; UI-тести на popup remove флакають                                |
-| Що робимо в тестах | Видалення там, де кнопка **стабільно видима** — на checkout (`a.j-remove-p` + confirm dialog)                   |
-| Evidence           | `tests/ui/cart.update.spec.ts`                                                                                  |
+| Що робимо в тестах | Видалення там, де кнопка **стабільно видима** — на checkout (`getByRole` «Видалити» + confirm dialog) |
+| Evidence           | `tests/ui/cart.update.spec.ts`, `page/checkout.page.ts`                                             |
 
 ---
 

@@ -1,4 +1,4 @@
-import { expect, test } from '../../fixtures/base.fixtures';
+import { expect, test } from '../../fixtures/ui.fixtures';
 import catalog from '../../data/catalog.data.json';
 import products from '../../data/products.data.json';
 
@@ -11,8 +11,13 @@ test.describe('Каталог: навігація та фільтри', () => {
     { tag: '@p0' },
     async ({ homePage, categoryPage }) => {
       await test.step('Відкрити категорію через меню', async () => {
-        await homePage.openCategoryFromMenu(category.parentHref, category.href);
-        await categoryPage.expectLoaded(category.heading);
+        await homePage.openCategoryFromMenu(
+          category.parentName,
+          category.categoryName,
+          category.categoryHref,
+        );
+        await expect(categoryPage.title).toContainText(category.heading);
+        await expect(categoryPage.productCards.first()).toBeVisible();
         await categoryPage.expectProductCountAtLeast(1);
       });
 
@@ -21,18 +26,21 @@ test.describe('Каталог: навігація та фільтри', () => {
       await test.step('Застосувати сортування «спочатку дешевше»', async () => {
         await categoryPage.sortBy(category.sortCheaperLabel);
         await categoryPage.expectUrlContains(category.sortCheaperUrlPart);
-        await categoryPage.expectPricesAscending();
+        const prices = await categoryPage.productPrices();
+        expect(prices).toEqual([...prices].sort((a, b) => a - b));
         await expect(categoryPage.productCards).toHaveCount(productCountBeforeFilter);
       });
 
       await test.step('Застосувати фільтр One size і перевірити інваріанти вибірки', async () => {
         await categoryPage.applyFilterByTitle(category.sizeFilterTitle);
         await categoryPage.expectUrlContains(category.sizeFilterUrlPart);
-        await categoryPage.expectHeading(category.filteredHeading);
-        await categoryPage.expectActiveFilterChip(category.sizeFilterTitle);
+        await expect(categoryPage.title).toHaveText(category.filteredHeading);
+        await expect(categoryPage.activeFilterChip).toContainText(category.sizeFilterTitle);
         await categoryPage.expectProductCountAtLeast(1);
-        await categoryPage.expectProductCountLessThan(productCountBeforeFilter);
-        await categoryPage.expectProductAbsent(excludedProductHref);
+        await expect
+          .poll(async () => categoryPage.productCards.count())
+          .toBeLessThan(productCountBeforeFilter);
+        await expect(categoryPage.productCardByHref(excludedProductHref)).toHaveCount(0);
       });
     },
   );

@@ -22,9 +22,11 @@
 4. **Не дублюйте локатори/HTTP у спеках** — використовуйте:
    - `page/*` для UI
    - `api/clients/*` для API
-   - `fixtures/base.fixtures.ts` для wiring
+   - `fixtures/api.fixtures.ts` / `fixtures/ui.fixtures.ts` для wiring відповідного шару
+   - UI flow (опційно): `fixtures/checkout.fixtures.ts` → фікстура `onCheckout`, якщо тест починається вже на checkout
 5. **Дані** тримайте в `data/*.json` (особливо товари — `products.data.json`)
 6. Для API-відповідей оновіть Zod у `api/schemas/`, path у `openapi/horoshop.openapi.json` і рядок у `tests/api/openapi/contract.spec.ts`
+7. Якщо фіксуєте quirk продукту — запис у [docs/KNOWN-ISSUES.md](docs/KNOWN-ISSUES.md) + `annotateKnownIssue('U1'|'A1'|…, '…')` у тесті (див. `fixtures/known-issue.ts`)
 
 ## Page Object / API Client
 
@@ -39,9 +41,9 @@
 
 ## Локатори
 
-- Надавайте перевагу стабільним селекторам: `href`, `id`, класи `j-*`, ролі
+- Надавайте перевагу вбудованим локаторам Playwright: `getByRole`, `getByLabel`, `getByPlaceholder`, `getByText`; CSS/`j-*` — лише коли немає accessible name
 - Уникайте прив’язки до маркетингового тексту, якщо є стабільніший атрибут
-- Для каталогу/пошуку перевіряйте slug/URL і точний набір товарів, а не лише «щось відобразилось»
+- Для каталогу/пошуку перевіряйте інваріанти (slug/URL, count, excluded item, chip), а не крихкий exact-list усіх SKU
 
 ## Команди перед PR
 
@@ -54,7 +56,7 @@ npm run test:p0
 
 Повний прогін перед великим мерджем: `npm test`.
 
-CI на PR ганяє те саме quality-gate + `@p0` API/UI. Переконайтесь, що в GitHub Secrets задані `HOROSHOP_LOGIN` / `HOROSHOP_PASSWORD` (див. README → CI).
+CI на PR виконує те саме quality-gate + `@p0` API/UI. У GitHub Secrets мають бути `HOROSHOP_API_LOGIN` / `HOROSHOP_API_PASSWORD` (див. README → CI).
 
 ## Naming
 

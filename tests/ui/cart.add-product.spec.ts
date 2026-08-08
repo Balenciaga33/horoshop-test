@@ -1,4 +1,4 @@
-import { annotateKnownIssue, expect, test } from '../../fixtures/base.fixtures';
+import { annotateKnownIssue, expect, test } from '../../fixtures/ui.fixtures';
 import products from '../../data/products.data.json';
 
 const product = products.gentleSkinCleanser;
@@ -8,7 +8,7 @@ test.describe('Кошик: додавання товару', () => {
     'Позитивний сценарій: сторінка товару → кошик → оформлення замовлення',
     { tag: '@p0' },
     async ({ productPage, cartPage, checkoutPage }) => {
-      annotateKnownIssue('U1', 'Cart AJAX BAD_CSRF in headless — UI runs headed');
+      annotateKnownIssue('U1', 'AJAX кошика BAD_CSRF у headless — UI у headed');
 
       await test.step('Відкрити сторінку товару', async () => {
         await productPage.open(product.slug);
@@ -22,10 +22,13 @@ test.describe('Кошик: додавання товару', () => {
       });
 
       await test.step('Перевірити вікно кошика', async () => {
-        await productPage.expectInCartState();
+        await expect(productPage.inCartButton).toBeVisible();
+        await expect(productPage.buyButton).toHaveCount(0);
         await cartPage.expectQuantity(product.quantity);
         await cartPage.expectTotalSum(product.price);
-        await cartPage.expectProductInCart(product.name);
+        await expect(cartPage.cartPopup).toBeVisible();
+        await expect(cartPage.cartItemByName(product.name)).toBeVisible();
+        await expect(cartPage.checkoutLink).toBeVisible();
       });
 
       await test.step('Перейти до оформлення і перевірити товар', async () => {

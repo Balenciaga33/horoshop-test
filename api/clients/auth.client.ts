@@ -7,7 +7,7 @@ export type AuthCredentials = {
 };
 
 /**
- * Horoshop Auth API — POST /api/auth/
+ * Auth API Horoshop — POST /api/auth/
  * @see https://horoshop.notion.site/api-doc
  */
 export class AuthClient extends BaseApiClient {

@@ -4,69 +4,42 @@ import { BasePage } from './base.page';
 export class CategoryPage extends BasePage {
   readonly title: Locator;
   readonly productCards: Locator;
-  readonly sidebar: Locator;
-  readonly sortButtons: Locator;
-  readonly activeSortButton: Locator;
+  /** Chip активного фільтра — без accessible name у DOM. */
   readonly activeFilterChip: Locator;
 
   constructor(page: Page) {
     super(page);
     this.title = page.getByRole('heading', { level: 1 });
+    // Клас відсікає sidebar listitem від карток товарів.
     this.productCards = page.locator('li.catalog-grid__item');
-    this.sidebar = page.locator('.j-catalog-sidebar');
-    this.sortButtons = page.locator('button.j-catalog-sorting-button');
-    this.activeSortButton = page.locator('button.j-catalog-sorting-button.is-active');
     this.activeFilterChip = page.locator('.filter-current-i__content');
   }
 
-  sortButton(label: string): Locator {
-    return this.sortButtons.filter({ hasText: label });
-  }
-
   filterByTitle(title: string): Locator {
-    return this.sidebar.locator('a.filter-check').filter({
-      has: this.page.locator('.j-filter-title', { hasText: new RegExp(`^${title}$`) }),
+    // Sidebar filter: accessible name на кшталт «One size 2».
+    return this.page.locator('.j-catalog-sidebar').getByRole('link', {
+      name: new RegExp(escapeRegExp(title)),
     });
   }
 
   productCardByHref(href: string): Locator {
     return this.productCards.filter({
-      has: this.page.locator(`a.catalogCard-image[href="${href}"]`),
+      has: this.page.locator(`a[href="${href}"]`),
     });
-  }
-
-  async expectLoaded(heading: string): Promise<void> {
-    await expect(this.title).toContainText(heading);
-    await expect(this.productCards.first()).toBeVisible();
   }
 
   async expectProductCountAtLeast(min: number): Promise<void> {
     await expect.poll(async () => this.productCards.count()).toBeGreaterThanOrEqual(min);
   }
 
-  async expectProductCountLessThan(maxExclusive: number): Promise<void> {
-    await expect.poll(async () => this.productCards.count()).toBeLessThan(maxExclusive);
-  }
-
-  async expectHeading(text: string): Promise<void> {
-    await expect(this.title).toHaveText(text);
-  }
-
-  async expectActiveFilterChip(label: string): Promise<void> {
-    await expect(this.activeFilterChip).toContainText(label);
-  }
-
-  async expectProductAbsent(href: string): Promise<void> {
-    await expect(this.productCardByHref(href)).toHaveCount(0);
+  async expectUrlContains(part: string): Promise<void> {
+    await expect(this.page).toHaveURL(new RegExp(part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
   }
 
   async sortBy(label: string): Promise<void> {
-    await this.sortButton(label).click();
-    await expect(this.activeSortButton).toHaveText(label);
-  }
-
-  async expectUrlContains(part: string): Promise<void> {
-    await expect(this.page).toHaveURL(new RegExp(part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+    const button = this.page.getByRole('button', { name: label, exact: true });
+    await button.click();
+    await expect(button).toHaveClass(/is-active/);
   }
 
   async applyFilterByTitle(title: string): Promise<void> {
@@ -83,10 +56,8 @@ export class CategoryPage extends BasePage {
       }),
     );
   }
+}
 
-  async expectPricesAscending(): Promise<void> {
-    const prices = await this.productPrices();
-    const sorted = [...prices].sort((a, b) => a - b);
-    expect(prices).toEqual(sorted);
-  }
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }

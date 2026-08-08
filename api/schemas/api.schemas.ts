@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { expect } from '@playwright/test';
 
-/** Horoshop auth token is a 32-char hex string (per API docs). */
+/** Токен auth Horoshop — hex-рядок 32 символи (за API docs). */
 export const authTokenSchema = z.string().regex(/^[a-f0-9]{32}$/i);
 
 export const authSuccessSchema = z.object({
@@ -18,7 +18,7 @@ export const authErrorSchema = z.object({
   }),
 });
 
-/** Core product fields used by tests; API returns many more. */
+/** Основні поля товару для тестів; API повертає значно більше. */
 export const catalogProductSchema = z.object({
   article: z.string().min(1),
   slug: z.string().min(1),
@@ -36,7 +36,7 @@ export const catalogExportSuccessSchema = z.object({
   }),
 });
 
-/** Missing token on protected endpoints. */
+/** Відсутній токен на захищених ендпоінтах. */
 export const authorizationErrorSchema = z.object({
   status: z.literal('AUTHORIZATION_ERROR'),
   response: z.object({
@@ -44,7 +44,7 @@ export const authorizationErrorSchema = z.object({
   }),
 });
 
-/** Present but invalid / incorrect token. */
+/** Токен передано, але він невалідний / неправильний. */
 export const unauthorizedErrorSchema = z.object({
   status: z.literal('UNAUTHORIZED'),
   response: z.object({

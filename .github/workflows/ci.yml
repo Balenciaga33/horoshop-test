@@ -14,7 +14,7 @@ concurrency:
 
 env:
   CI: true
-  # Override via repository Variable HOROSHOP_BASE_URL if needed.
+  # За потреби перевизначити через repository Variable HOROSHOP_BASE_URL.
   HOROSHOP_BASE_URL: ${{ vars.HOROSHOP_BASE_URL != '' && vars.HOROSHOP_BASE_URL || 'https://shop703343.horoshop.ua' }}
 
 jobs:
@@ -25,10 +25,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '22'
           cache: npm
@@ -53,10 +53,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '22'
           cache: npm
@@ -64,14 +64,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # API project uses request-context only — no browser binaries needed.
+      # API project використовує лише request-context — browser binaries не потрібні.
 
       - name: API tests
         env:
-          HOROSHOP_LOGIN: ${{ secrets.HOROSHOP_LOGIN }}
-          HOROSHOP_PASSWORD: ${{ secrets.HOROSHOP_PASSWORD }}
+          HOROSHOP_API_LOGIN: ${{ secrets.HOROSHOP_API_LOGIN }}
+          HOROSHOP_API_PASSWORD: ${{ secrets.HOROSHOP_API_PASSWORD }}
         run: |
-          # PR = smoke @p0; push/manual = full project suite
+          # PR = smoke @p0; push/manual = повний API suite
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             npm run test:p0:api
           else
@@ -80,7 +80,7 @@ jobs:
 
       - name: Upload Playwright report (API)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: playwright-report-api
           path: |
@@ -93,17 +93,17 @@ jobs:
     name: Playwright UI (headed + xvfb)
     runs-on: ubuntu-latest
     timeout-minutes: 45
-    # Fail-fast: skip expensive headed UI if API/auth already red.
+    # Fail-fast: не запускати дорогий headed UI, якщо API/auth уже червоний.
     needs:
       - quality
       - api
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '22'
           cache: npm
@@ -116,12 +116,12 @@ jobs:
 
       - name: UI tests
         env:
-          HOROSHOP_LOGIN: ${{ secrets.HOROSHOP_LOGIN }}
-          HOROSHOP_PASSWORD: ${{ secrets.HOROSHOP_PASSWORD }}
+          HOROSHOP_API_LOGIN: ${{ secrets.HOROSHOP_API_LOGIN }}
+          HOROSHOP_API_PASSWORD: ${{ secrets.HOROSHOP_API_PASSWORD }}
         run: |
-          # Horoshop cart AJAX returns BAD_CSRF under headless Chromium (KNOWN-ISSUES U1).
-          # CI runs headed Chrome inside a virtual display.
-          # PR = smoke @p0; push/manual = full UI suite
+          # Horoshop cart AJAX → BAD_CSRF у headless (KNOWN-ISSUES U1).
+          # headless: false у playwright.config; xvfb — віртуальний дисплей на Linux.
+          # PR = smoke @p0; push/manual = повний UI suite
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             xvfb-run --auto-servernum npm run test:p0:ui
           else
@@ -130,7 +130,7 @@ jobs:
 
       - name: Upload Playwright report (UI)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: playwright-report-ui
           path: |
