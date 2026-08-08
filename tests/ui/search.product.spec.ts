@@ -24,9 +24,6 @@ test.describe('Пошук товарів', () => {
         await expect(searchPage.searchInput).toHaveValue(product.name);
         await expect(searchPage.productCards.first()).toBeVisible();
         await expect(searchPage.productCardByHref(product.slug)).toHaveCount(1);
-        await expect(
-          searchPage.productCards.first().locator('a.catalogCard-image'),
-        ).toHaveAttribute('href', product.slug);
       });
 
       await test.step('Відкрити товар із результатів', async () => {

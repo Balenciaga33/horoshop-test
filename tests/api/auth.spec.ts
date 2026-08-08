@@ -7,8 +7,6 @@ test.describe('API: авторизація', () => {
     'Успішний POST /api/auth/ повертає OK і токен (32 символи)',
     { tag: '@p0' },
     async ({ authClient }) => {
-      annotateKnownIssue('A1', 'Бізнес-результат у body.status — HTTP лишається 200');
-
       const credentials = requireApiCredentials();
       const response = await authClient.auth(credentials);
 

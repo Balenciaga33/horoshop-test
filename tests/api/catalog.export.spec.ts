@@ -15,8 +15,6 @@ test.describe('API: каталог', () => {
     'POST /api/catalog/export/ з токеном повертає products',
     { tag: '@p0' },
     async ({ catalogClient, apiToken }) => {
-      annotateKnownIssue('A1', 'Бізнес-результат у body.status — HTTP лишається 200');
-
       const response = await catalogClient.export(apiToken);
       expect(response.status()).toBe(200);
       const body = await catalogClient.expectJson(response);

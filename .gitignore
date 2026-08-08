@@ -1,5 +1,12 @@
+# Залежності npm
 node_modules/
+
+# Звіти та артефакти Playwright
 playwright-report/
 test-results/
+
+# Локальні секрети (див. .env.example)
 .env
+
+# Службові файли macOS
 .DS_Store

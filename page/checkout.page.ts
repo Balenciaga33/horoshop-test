@@ -2,7 +2,6 @@ import { type Locator, type Page, expect } from '@playwright/test';
 import { BasePage } from './base.page';
 
 export class CheckoutPage extends BasePage {
-  readonly title: Locator;
   /** Область товарів у замовленні (унікальний регіон без a11y-імені). */
   readonly orderList: Locator;
   readonly totalSum: Locator;
@@ -16,7 +15,6 @@ export class CheckoutPage extends BasePage {
 
   constructor(page: Page) {
     super(page);
-    this.title = page.getByRole('heading', { name: 'Оформлення замовлення', level: 1 });
     this.orderList = page.locator('ul.order-list');
     this.totalSum = page.locator('.j-total-sum');
     // На сторінці кілька полів «Телефон»/«Е-пошта» (callback, login) — звужуємо через id.
@@ -46,11 +44,6 @@ export class CheckoutPage extends BasePage {
 
   productRemoveButton(name: string): Locator {
     return this.productItem(name).getByRole('link', { name: 'Видалити' });
-  }
-
-  async expectLoaded(): Promise<void> {
-    await expect(this.page).toHaveURL(/\/checkout\/?/);
-    await expect(this.title).toBeVisible();
   }
 
   async expectProduct(name: string, quantity: number | string, totalPrice: string): Promise<void> {

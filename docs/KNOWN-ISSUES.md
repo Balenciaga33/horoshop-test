@@ -12,13 +12,13 @@ ID йдуть по порядку в межах префікса: `U1`, `U2`, �
 
 ### U1 — Кошик у headless Chromium отримує `BAD_CSRF`
 
-|                    |                                                                                                                  |
-| ------------------ | ---------------------------------------------------------------------------------------------------------------- |
-| Очікування         | UI-тести стабільно працюють у headless                                                                           |
-| Факт               | `/_widget/ajax_cart/init/` часто падає з `BAD_CSRF` у headless                                                   |
-| Ризик              | False fail у CI без headed / спеціального обходу                                                                 |
-| Що робимо в тестах | UI: `headless: false` у `playwright.config`; у CI — `xvfb-run` (virtual display)                                 |
-| Evidence           | `playwright.config.ts`, `.github/workflows/ci.yml`, `helper/cart.helper.ts`, `tests/ui/cart.add-product.spec.ts` |
+|                    |                                                                                                                                         |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
+| Очікування         | UI-тести стабільно працюють у headless                                                                                                  |
+| Факт               | `/_widget/ajax_cart/init/` часто падає з `BAD_CSRF` у headless                                                                          |
+| Ризик              | False fail у CI без headed / спеціального обходу                                                                                        |
+| Що робимо в тестах | UI: `headless: false` у `playwright.config`; у CI — `xvfb-run` (virtual display)                                                        |
+| Evidence           | `playwright.config.ts`, `.github/workflows/ci.yml`, `helper/cart.helper.ts`, `tests/ui/cart.*.spec.ts`, `fixtures/checkout.fixtures.ts` |
 
 ### U2 — Remove в popup-кошику майже неклікабельний (поганий UX)
 
@@ -36,13 +36,13 @@ ID йдуть по порядку в межах префікса: `U1`, `U2`, �
 
 ### A1 — Бізнес-помилки повертаються з HTTP 200
 
-|                          |                                                                     |
-| ------------------------ | ------------------------------------------------------------------- |
-| Очікування (типове REST) | Невалідний login → `401`/`403`                                      |
-| Факт                     | Майже завжди HTTP `200`, результат у полі `status` (`OK`/`ERROR`/…) |
-| Ризик                    | Клієнти, що дивляться лише на HTTP-код, «проковтнуть» помилку       |
-| Що робимо в тестах       | Асертимо `status` + Zod-схему body                                  |
-| Evidence                 | `tests/api/auth.spec.ts`, catalog specs                             |
+|                          |                                                                                                                |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------- |
+| Очікування (типове REST) | Невалідний login → `401`/`403`                                                                                 |
+| Факт                     | Майже завжди HTTP `200`, результат у полі `status` (`OK`/`ERROR`/…)                                            |
+| Ризик                    | Клієнти, що дивляться лише на HTTP-код, «проковтнуть» помилку                                                  |
+| Що робимо в тестах       | Асертимо `status` + Zod-схему body                                                                             |
+| Evidence                 | Error-кейси: `tests/api/auth.spec.ts` (невалідний login), `tests/api/catalog.export.spec.ts` (без/битий токен) |
 
 ### A2 — Немає live OpenAPI (`/api/doc.json`)
 

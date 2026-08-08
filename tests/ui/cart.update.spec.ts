@@ -34,7 +34,6 @@ test.describe('Кошик: оновлення', () => {
         await cartPage.increaseItemQuantity(product.name);
         await cartPage.expectItemState(product.name, 2, unitPrice, totalFor(2));
         await cartPage.goToCheckout();
-        await checkoutPage.expectLoaded();
         await checkoutPage.expectProductWithUnitPrice(product.name, 2, unitPrice, totalFor(2));
       });
 

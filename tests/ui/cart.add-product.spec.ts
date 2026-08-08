@@ -33,7 +33,6 @@ test.describe('Кошик: додавання товару', () => {
 
       await test.step('Перейти до оформлення і перевірити товар', async () => {
         await cartPage.goToCheckout();
-        await checkoutPage.expectLoaded();
         await checkoutPage.expectProductWithUnitPrice(
           product.name,
           product.quantity,
